@@ -1,0 +1,570 @@
+/* استيراد خطوط Google الجميلة للعربية */
+@import url("https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* تعيين الخط الافتراضي للموقع */
+:root {
+  font-family: "Tajawal", system-ui, sans-serif;
+}
+
+/* Accessibility - High Contrast Mode */
+.high-contrast {
+  --background: #000000;
+  --foreground: #ffffff;
+  --card: #1a1a1a;
+  --card-foreground: #ffffff;
+  --popover: #1a1a1a;
+  --popover-foreground: #ffffff;
+  --primary: #ffff00;
+  --primary-foreground: #000000;
+  --secondary: #00ffff;
+  --secondary-foreground: #000000;
+  --accent: #ff00ff;
+  --accent-foreground: #000000;
+  --destructive: #ff0000;
+  --destructive-foreground: #ffffff;
+  --border: #ffffff;
+  --input: #ffffff;
+  --ring: #ffff00;
+}
+
+/* High contrast text */
+.high-contrast h1,
+.high-contrast h2,
+.high-contrast h3,
+.high-contrast h4,
+.high-contrast h5,
+.high-contrast h6 {
+  color: #ffffff !important;
+  text-shadow: 1px 1px 0 #000000;
+}
+
+.high-contrast a {
+  color: #ffff00 !important;
+  text-decoration: underline;
+}
+
+.high-contrast button {
+  border: 2px solid white !important;
+}
+
+/* Reduce motion for users who prefer reduced motion */
+@media (prefers-reduced-motion) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001s !important;
+    transition-duration: 0.001s !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+.reduce-motion *,
+.reduce-motion *::before,
+.reduce-motion *::after {
+  animation-duration: 0.001s !important;
+  transition-duration: 0.001s !important;
+  scroll-behavior: auto !important;
+}
+
+/* Focus styles for better keyboard navigation */
+*:focus-visible {
+  outline: 3px solid var(--primary) !important;
+  outline-offset: 2px !important;
+}
+
+/* Skip to content link - hidden by default, visible on focus */
+.skip-to-content {
+  position: absolute;
+  top: -9999px;
+  left: -9999px;
+  z-index: 9999;
+  padding: 0.5rem 1rem;
+  background: var(--primary);
+  color: var(--primary-foreground);
+  text-decoration: none;
+  border-radius: 0 0 0.25rem 0.25rem;
+}
+
+.skip-to-content:focus {
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+/* إضافة تنسيقات مؤشر الكتابة */
+.typing-animation {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  margin-right: 4px;
+}
+
+.typing-animation .dot {
+  display: block;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background-color: currentColor;
+  opacity: 0.7;
+  animation: typingAnimation 1.4s infinite ease-in-out;
+}
+
+.typing-animation .dot:nth-child(1) {
+  animation-delay: 0s;
+}
+
+.typing-animation .dot:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.typing-animation .dot:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+@keyframes typingAnimation {
+  0%,
+  60%,
+  100% {
+    transform: translateY(0);
+  }
+  30% {
+    transform: translateY(-4px);
+  }
+}
+
+/* تنسيقات عرض الصور والملفات في المحادثة */
+.message-with-media {
+  max-width: 100%;
+}
+
+.message-with-media img {
+  transition: all 0.2s ease-in-out;
+  cursor: pointer;
+}
+
+.message-with-media img:hover {
+  transform: scale(1.02);
+}
+
+/* انيميشن لأيقونة التحميل */
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+:root {
+  /* Professional Soccer Field Theme */
+  --background: 0 0% 100%;
+  --foreground: 0 0% 10%;
+  --muted: 120 20% 96%;
+  --muted-foreground: 120 5% 45%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 0 0% 10%;
+  --card: 0 0% 100%;
+  --card-foreground: 0 0% 10%;
+  --border: 120 15% 88%;
+  --input: 120 15% 94%;
+
+  /* Soccer Field Green - Primary Color */
+  --primary: 120 65% 25%; /* Deep soccer field green */
+  --primary-foreground: 0 0% 100%;
+
+  /* Stadium Blue - Secondary Color */
+  --secondary: 220 85% 15%; /* Deep stadium blue */
+  --secondary-foreground: 0 0% 100%;
+
+  /* Match Day Orange - Accent Color */
+  --accent: 35 85% 55%; /* Professional orange */
+  --accent-foreground: 0 0% 100%;
+
+  /* Destructive Red */
+  --destructive: 0 84% 60%; /* Red card color */
+  --destructive-foreground: 0 0% 100%;
+
+  --ring: 120 65% 25%;
+  --radius: 0.75rem;
+}
+
+.dark {
+  /* Professional Night Stadium Theme */
+  --background: 220 25% 8%; /* Deep night stadium */
+  --foreground: 0 0% 98%;
+  --muted: 220 20% 15%;
+  --muted-foreground: 220 10% 65%;
+  --popover: 220 25% 8%;
+  --popover-foreground: 0 0% 98%;
+  --card: 220 25% 10%;
+  --card-foreground: 0 0% 98%;
+  --border: 220 15% 20%;
+  --input: 220 15% 15%;
+
+  /* Soccer Field Green - Enhanced for dark mode */
+  --primary: 120 70% 35%; /* Brighter field green for dark backgrounds */
+  --primary-foreground: 0 0% 100%;
+
+  /* Stadium Lights Blue */
+  --secondary: 220 90% 25%; /* Stadium lighting blue */
+  --secondary-foreground: 0 0% 100%;
+
+  /* Match Day Orange - Enhanced */
+  --accent: 35 90% 60%; /* Brighter orange for visibility */
+  --accent-foreground: 0 0% 100%;
+
+  /* Destructive Red - Enhanced */
+  --destructive: 0 84% 65%;
+  --destructive-foreground: 0 0% 100%;
+
+  --ring: 120 70% 35%;
+  --radius: 0.75rem;
+}
+
+/* تحسين عرض الأيقونات والعناصر في الوضع الداكن */
+.dark svg {
+  color: #ffffff;
+}
+
+.dark .text-primary {
+  color: #4ade80 !important;
+}
+
+/* تحسين مظهر المربعات في الوضع الداك�� */
+.dark .rounded-full,
+.dark .rounded-md,
+.dark .rounded-lg,
+.dark .bg-gray-100 {
+  background-color: #1e293b !important;
+  border: 1px solid #4ade80 !important;
+  color: white !important;
+}
+
+.dark .bg-gray-100:hover,
+.dark .rounded-full:hover {
+  background-color: #334155 !important;
+}
+
+/* تنسيقات RTL و LTR */
+body.rtl,
+body[data-direction="rtl"] {
+  text-align: right;
+}
+
+body.ltr,
+body[data-direction="ltr"] {
+  text-align: left;
+}
+
+/* جعل الصور في وسط السطر وليس البداية */
+.rtl img,
+[dir="rtl"] img {
+  display: inline-block;
+}
+
+/* تنسيقات لضبط الهوامش في حالة RTL */
+body.rtl .ml-2,
+body[data-direction="rtl"] .ml-2 {
+  margin-left: 0;
+  margin-right: 0.5rem;
+}
+
+body.rtl .mr-2,
+body[data-direction="rtl"] .mr-2 {
+  margin-right: 0;
+  margin-left: 0.5rem;
+}
+
+/* تنسيقات لضبط الحقول والخطوط في حالة تغيير اللغة */
+body.rtl input,
+body.rtl textarea,
+body[data-direction="rtl"] input,
+body[data-direction="rtl"] textarea {
+  text-align: right;
+}
+
+body.ltr input,
+body.ltr textarea,
+body[data-direction="ltr"] input,
+body[data-direction="ltr"] textarea {
+  text-align: left;
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply font-['Tajawal',sans-serif] antialiased bg-background text-foreground;
+    letter-spacing: 0.01em;
+    line-height: 1.6;
+    word-spacing: 0.02em;
+  }
+
+  /* تنسيق العناوين */
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    @apply font-['Tajawal',sans-serif] font-bold mb-4;
+    line-height: 1.3;
+    letter-spacing: 0.01em;
+  }
+
+  h1 {
+    @apply text-3xl md:text-4xl;
+  }
+
+  h2 {
+    @apply text-2xl md:text-3xl;
+  }
+
+  h3 {
+    @apply text-xl md:text-2xl;
+  }
+
+  /* تنسيق الفقرات */
+  p {
+    @apply mb-4;
+    line-height: 1.6;
+    word-spacing: 0.02em;
+  }
+
+  /* تنسيق الروابط */
+  a {
+    @apply text-primary hover:text-primary/80 transition-colors duration-200;
+    text-underline-offset: 2px;
+  }
+
+  /* تنسيق الأزرار */
+  button,
+  .btn {
+    @apply font-['Tajawal',sans-serif] font-medium;
+    letter-spacing: 0.01em;
+  }
+
+  /* تنسيق العناصر في النموذج */
+  input,
+  textarea,
+  select {
+    @apply font-['Tajawal',sans-serif];
+  }
+
+  /* تنسيق القوائم */
+  ul,
+  ol {
+    @apply my-4 ml-6 space-y-2;
+    line-height: 1.6;
+  }
+
+  li {
+    line-height: 1.6;
+    margin-bottom: 4px;
+  }
+
+  /* تنسيق للنصوص في كل مكان */
+  .text-xs,
+  .text-sm,
+  .text-base,
+  .text-lg,
+  .text-xl,
+  .text-2xl,
+  .text-3xl {
+    @apply font-['Tajawal',sans-serif];
+    line-height: 1.6;
+    letter-spacing: 0.01em;
+    word-spacing: 0.02em;
+  }
+
+  /* Professional Soccer Card Styling */
+  .card,
+  .shadow-sm,
+  .shadow,
+  .shadow-md,
+  .shadow-lg {
+    @apply transition-all duration-300;
+    border: 1px solid hsl(var(--border));
+  }
+
+  .card:hover,
+  .shadow-sm:hover {
+    @apply shadow-lg;
+    transform: translateY(-3px);
+    border: 1px solid hsl(var(--primary) / 0.3);
+    box-shadow: 0 10px 25px hsl(var(--primary) / 0.1);
+  }
+
+  /* Soccer Field Gradients */
+  .soccer-field-gradient {
+    background: linear-gradient(
+      135deg,
+      hsl(var(--primary)) 0%,
+      hsl(120 60% 30%) 100%
+    );
+  }
+
+  .stadium-gradient {
+    background: linear-gradient(
+      135deg,
+      hsl(var(--secondary)) 0%,
+      hsl(220 80% 20%) 100%
+    );
+  }
+
+  .pitch-gradient {
+    background: linear-gradient(
+      45deg,
+      hsl(120 30% 95%) 0%,
+      hsl(120 25% 98%) 100%
+    );
+  }
+
+  /* Professional Button Enhancements */
+  .btn-primary {
+    @apply bg-primary text-primary-foreground hover:bg-primary/90;
+    background: linear-gradient(
+      135deg,
+      hsl(var(--primary)) 0%,
+      hsl(120 60% 30%) 100%
+    );
+    box-shadow: 0 4px 12px hsl(var(--primary) / 0.3);
+  }
+
+  .btn-secondary {
+    @apply bg-secondary text-secondary-foreground hover:bg-secondary/90;
+    background: linear-gradient(
+      135deg,
+      hsl(var(--secondary)) 0%,
+      hsl(220 80% 20%) 100%
+    );
+    box-shadow: 0 4px 12px hsl(var(--secondary) / 0.3);
+  }
+
+  /* Match Day Animations */
+  @keyframes kick-ball {
+    0% {
+      transform: translateX(0) scale(1);
+    }
+    25% {
+      transform: translateX(5px) scale(1.05);
+    }
+    50% {
+      transform: translateX(0) scale(1);
+    }
+    75% {
+      transform: translateX(-5px) scale(0.95);
+    }
+    100% {
+      transform: translateX(0) scale(1);
+    }
+  }
+
+  .kick-animation {
+    animation: kick-ball 0.6s ease-in-out;
+  }
+
+  @keyframes goal-celebration {
+    0% {
+      transform: scale(1) rotate(0deg);
+    }
+    25% {
+      transform: scale(1.1) rotate(5deg);
+    }
+    50% {
+      transform: scale(1.05) rotate(-5deg);
+    }
+    75% {
+      transform: scale(1.1) rotate(3deg);
+    }
+    100% {
+      transform: scale(1) rotate(0deg);
+    }
+  }
+
+  .goal-animation {
+    animation: goal-celebration 0.8s ease-in-out;
+  }
+
+  /* Professional Stadium Lighting Effect */
+  .stadium-lights {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .stadium-lights::before {
+    content: "";
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(
+      circle,
+      hsl(var(--primary) / 0.1) 0%,
+      transparent 70%
+    );
+    animation: stadium-pulse 3s ease-in-out infinite;
+  }
+
+  @keyframes stadium-pulse {
+    0%,
+    100% {
+      opacity: 0.5;
+      transform: scale(1);
+    }
+    50% {
+      opacity: 0.8;
+      transform: scale(1.05);
+    }
+  }
+
+  /* شريط التمرير */
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background-color: #f1f1f1;
+    border-radius: 4px;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background-color: #888;
+    border-radius: 4px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background-color: #555;
+  }
+
+  /* تنسيقات للأجهزة المحمولة والمتوسطة */
+  @media (max-width: 768px) {
+    body {
+      font-size: 0.95rem;
+      word-spacing: 0.01em;
+    }
+
+    h1 {
+      font-size: 2rem;
+      line-height: 1.2;
+    }
+
+    h2 {
+      font-size: 1.75rem;
+    }
+
+    p {
+      line-height: 1.6;
+    }
+  }
+}

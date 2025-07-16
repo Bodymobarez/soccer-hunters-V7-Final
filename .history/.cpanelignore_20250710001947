@@ -1,0 +1,35 @@
+# Development files that shouldn't be uploaded to cPanel
+node_modules/
+.git/
+.vscode/
+*.log
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Source files (TypeScript)
+server/
+client/src/
+client/public/
+
+# Build artifacts (development)
+client/dist/
+dist/
+
+# Documentation and development files
+README.md
+LOGO_INSTRUCTIONS.md
+README_LOGO.md
+*.zip
+attached_assets/
+soccer_hunter_github/
+
+# Config files for development
+vite.config.ts
+tsconfig.json
+postcss.config.js
+tailwind.config.ts
+components.json
+drizzle.config.ts

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="600" height="400" viewBox="0 0 600 400">
+  <!-- خلفية الصورة -->
+  <rect width="600" height="400" fill="#f5f5f5"/>
+  
+  <!-- شكل الرأس -->
+  <circle cx="300" cy="150" r="100" fill="#e6c19c"/>
+  
+  <!-- الوجه -->
+  <circle cx="260" cy="130" r="12" fill="#3d3d3d"/> <!-- العين اليسرى -->
+  <circle cx="340" cy="130" r="12" fill="#3d3d3d"/> <!-- العين اليمنى -->
+  <path d="M280 180 Q300 200, 320 180" stroke="#3d3d3d" stroke-width="4" fill="none"/> <!-- الفم -->
+  <path d="M280 110 Q300 90, 320 110" stroke="#3d3d3d" stroke-width="2" fill="none"/> <!-- الحاجب -->
+  
+  <!-- الشعر/الرأس -->
+  <path d="M200 150 Q300 50, 400 150" stroke="#3d3d3d" stroke-width="10" fill="none"/>
+  
+  <!-- جسم -->
+  <rect x="250" y="250" width="100" height="150" fill="#cc0000"/> <!-- قميص أحمر -->
+  
+  <!-- النص -->
+  <text x="300" y="350" font-family="Arial" font-size="24" text-anchor="middle" fill="white">عصام الحضري</text>
+  <text x="300" y="380" font-family="Arial" font-size="18" text-anchor="middle" fill="white">مدرب حراس المرمى</text>
+</svg>

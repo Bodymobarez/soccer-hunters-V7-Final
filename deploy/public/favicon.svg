@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <rect width="32" height="32" fill="#000000"/>
+  <circle cx="16" cy="16" r="14" fill="#22C55E"/>
+  <circle cx="16" cy="16" r="8" fill="#FFFFFF"/>
+  <text x="16" y="20" text-anchor="middle" fill="#000000" font-size="8" font-weight="bold">SH</text>
+</svg> 

@@ -1,0 +1,20 @@
+# مجلدات PHP التي لا يجب تتبعها
+/vendor/
+/node_modules/
+/.vscode/
+/.idea/
+/logs/
+
+# ملفات النظام
+.DS_Store
+Thumbs.db
+
+# ملفات إعدادات البيئة
+.env
+.env.local
+.env.*.local
+
+# ملفات مؤقتة
+*.log
+*.cache
+*.tmp

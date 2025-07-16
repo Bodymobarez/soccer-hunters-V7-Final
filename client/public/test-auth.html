@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Authentication</title>
+</head>
+<body>
+    <h1>Test Authentication</h1>
+    
+    <div>
+        <h2>Login</h2>
+        <form id="loginForm">
+            <input type="text" id="username" placeholder="Username" value="yasser" />
+            <input type="password" id="password" placeholder="Password" value="Yasser@123" />
+            <button type="submit">Login</button>
+        </form>
+    </div>
+    
+    <div>
+        <h2>Check User</h2>
+        <button id="checkUser">Check Current User</button>
+    </div>
+    
+    <div>
+        <h2>Logout</h2>
+        <button id="logout">Logout</button>
+    </div>
+    
+    <div id="result"></div>
+    
+    <script>
+        const resultDiv = document.getElementById('result');
+        
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            
+            try {
+                const response = await fetch('/api/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    credentials: 'include',
+                    body: JSON.stringify({ username, password })
+                });
+                
+                const data = await response.json();
+                resultDiv.innerHTML = `<h3>Login Result:</h3><pre>${JSON.stringify(data, null, 2)}</pre>`;
+            } catch (error) {
+                resultDiv.innerHTML = `<h3>Login Error:</h3><pre>${error.message}</pre>`;
+            }
+        });
+        
+        document.getElementById('checkUser').addEventListener('click', async () => {
+            try {
+                const response = await fetch('/api/user', {
+                    credentials: 'include'
+                });
+                
+                const data = await response.json();
+                resultDiv.innerHTML = `<h3>Current User:</h3><pre>${JSON.stringify(data, null, 2)}</pre>`;
+            } catch (error) {
+                resultDiv.innerHTML = `<h3>User Check Error:</h3><pre>${error.message}</pre>`;
+            }
+        });
+        
+        document.getElementById('logout').addEventListener('click', async () => {
+            try {
+                const response = await fetch('/api/logout', {
+                    method: 'POST',
+                    credentials: 'include'
+                });
+                
+                resultDiv.innerHTML = `<h3>Logout Result:</h3><pre>Status: ${response.status}</pre>`;
+            } catch (error) {
+                resultDiv.innerHTML = `<h3>Logout Error:</h3><pre>${error.message}</pre>`;
+            }
+        });
+    </script>
+</body>
+</html>

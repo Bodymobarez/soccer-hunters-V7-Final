@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Soccer Hunters - منصة تسويق لاعبين ومدربين كرة القدم</title>
+    <link
+      rel="icon"
+      type="image/webp"
+      href="https://cdn.builder.io/api/v1/image/assets%2F736a29cbb4df45b5aa76031004ac481f%2Fd95af2937bd5478b99a5a89228284f2d?format=webp&width=32"
+    />
+    <link
+      rel="apple-touch-icon"
+      href="https://cdn.builder.io/api/v1/image/assets%2F736a29cbb4df45b5aa76031004ac481f%2Fd95af2937bd5478b99a5a89228284f2d?format=webp&width=180"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800&family=Tajawal:wght@300;400;500;700&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <div id="root"></div>
+    <!-- Node.js polyfills for browser compatibility with modules like simple-peer -->
+    <script>
+      // Run this script before any module code runs
+      window.global = window;
+      window.process = { env: {} };
+      window.Buffer = {
+        isBuffer: function () {
+          return false;
+        },
+      };
+    </script>
+    <script type="module" src="/src/main.tsx"></script>
+    <!-- This is a replit script which adds a banner on the top of the page when opened in development mode outside the replit environment -->
+    <script
+      type="text/javascript"
+      src="https://replit.com/public/js/replit-dev-banner.js"
+    ></script>
+  </body>
+</html>
