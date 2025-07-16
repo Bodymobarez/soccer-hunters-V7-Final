@@ -239,6 +239,21 @@ function Router() {
         )}
       </Route>
 
+      <Route path="/simple-translation">
+        {() => (
+          <ProtectedRoute>
+            <SimpleTranslationTest />
+          </ProtectedRoute>
+        )}
+      </Route>
+
+      <Route path="/final-translation">
+        {() => (
+          <ProtectedRoute>
+            <FinalTranslationTest />
+          </ProtectedRoute>
+        )}
+      </Route>
 
       {/* مسارات محمية حسب الدور */}
       <Route path="/talent-dashboard">

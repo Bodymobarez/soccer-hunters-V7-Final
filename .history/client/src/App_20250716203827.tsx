@@ -4,15 +4,13 @@ import { queryClient } from "./lib/queryClient";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { useDocumentDirection } from "@/hooks/use-document-direction";
 import { AuthProvider } from "@/hooks/use-auth";
 import { ProtectedRoute } from "@/components/protected-route";
 import { Navbar } from "@/components/navbar";
 import { ChatProvider } from "@/components/chat/chat-provider";
 import ChatButton from "@/components/chat/chat-button";
-import {
-  UnifiedTranslationProvider,
-  useUnifiedTranslation,
-} from "@/hooks/use-unified-translation";
+import { TranslationProvider, useTranslation } from "@/hooks/use-translation";
 import { ErrorBoundary } from "@/components/error-boundary";
 import NotFound from "@/pages/not-found";
 import Home from "@/pages/home";
@@ -23,8 +21,6 @@ import AuthPage from "@/pages/auth-page";
 import CategoryPage from "@/pages/category-page";
 import ServicesPage from "@/pages/services-page";
 import TestTranslation from "@/pages/test-translation";
-import SimpleTranslationTest from "@/pages/simple-translation-test";
-import FinalTranslationTest from "@/pages/final-translation-test";
 import TalentDashboard from "@/pages/talent-dashboard";
 import CoachDashboard from "@/pages/coach-dashboard";
 import ClubDashboard from "@/pages/club-dashboard";
@@ -243,21 +239,6 @@ function Router() {
         )}
       </Route>
 
-      <Route path="/simple-translation">
-        {() => (
-          <ProtectedRoute>
-            <SimpleTranslationTest />
-          </ProtectedRoute>
-        )}
-      </Route>
-
-      <Route path="/final-translation">
-        {() => (
-          <ProtectedRoute>
-            <FinalTranslationTest />
-          </ProtectedRoute>
-        )}
-      </Route>
 
       {/* مسارات محمية حسب الدور */}
       <Route path="/talent-dashboard">
@@ -332,7 +313,7 @@ function Router() {
         <UploadPage />
       </Route>
 
-      {/* صفحة فحص حالة النظام - متاحة للجميع */}
+      {/* صفحة فحص حالة النظام - متاحة للجمةع */}
       <Route path="/health-check">
         <HealthCheck />
       </Route>
@@ -343,36 +324,43 @@ function Router() {
   );
 }
 
-// Component for automatic document direction handling
+// مكون لاستخدام هوك اتجاه المستند بعد تهيئة مزود الترجمة
 function DocumentDirectionHandler() {
-  const { dir, locale } = useUnifiedTranslation();
+  // استخدام الهوك للحصول على الاتجاه الحالي واللغة
+  const { dir, currentLanguage } = useDocumentDirection();
 
+  // الاستماع لأحداث تغيير اللغة وتحديث الاتجاه تلقائيًا
   useEffect(() => {
-    // Ensure document properties are always in sync
-    document.documentElement.dir = dir;
-    document.documentElement.lang = locale;
+    const handleLanguageChanged = () => {
+      // التحقق من التخزين المحلي لقيمة اللغة الجديدة
+      const appLocale = localStorage.getItem("app-locale");
+      if (appLocale) {
+        // تحديث اتجاه المستند
+        const newDir = appLocale === "ar" ? "rtl" : "ltr";
+        document.documentElement.dir = newDir;
+        document.documentElement.lang = appLocale;
+        console.log(
+          `✅ DocumentDirectionHandler: تم تحديث اتجاه المستند إلى ${newDir}`,
+        );
+      }
+    };
 
-    // Set global variable for backward compatibility
-    (window as any).currentSiteLanguage = locale;
+    // تسجيل المستمع
+    window.addEventListener("languageChanged", handleLanguageChanged);
 
-    console.log(`🌐 Document direction updated: ${dir}, language: ${locale}`);
-  }, [dir, locale]);
+    // إزالة المستمع ةند إلغاء تحميل المكون
+    return () => {
+      window.removeEventListener("languageChanged", handleLanguageChanged);
+    };
+  }, []);
 
   return null;
 }
 
-// Skip to content link for accessibility
 function SkipToContentLink() {
-  const { t } = useUnifiedTranslation();
+  const { t } = useTranslation();
   return (
-    <a
-      href="#main-content"
-      className="
-        sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 
-        bg-primary text-primary-foreground px-4 py-2 rounded-md z-50
-        focus:outline-none focus:ring-2 focus:ring-ring
-      "
-    >
+    <a href="#main-content" className="skip-to-content">
       {t("skipToContent")}
     </a>
   );
@@ -380,12 +368,11 @@ function SkipToContentLink() {
 
 function App() {
   const [location] = useLocation();
-
   return (
     <ErrorBoundary>
       <QueryClientProvider client={queryClient}>
         <AuthProvider>
-          <UnifiedTranslationProvider>
+          <TranslationProvider>
             <DocumentDirectionHandler />
             <ChatProvider>
               <TooltipProvider>
@@ -393,18 +380,15 @@ function App() {
                 <SkipToContentLink />
 
                 <Toaster />
-
                 {/* عرض شريط التنقل فقط في حالة تسجيل الدخول */}
                 {location !== "/" && <Navbar />}
-
                 <main id="main-content" className="min-h-screen" tabIndex={-1}>
                   <Router />
                 </main>
-
                 {location !== "/" && <ChatButton />}
               </TooltipProvider>
             </ChatProvider>
-          </UnifiedTranslationProvider>
+          </TranslationProvider>
         </AuthProvider>
       </QueryClientProvider>
     </ErrorBoundary>

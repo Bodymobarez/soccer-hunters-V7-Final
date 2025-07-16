@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { useAuth } from "@/hooks/use-auth";
-import { useTranslation } from "@/hooks/use-translation";
+import { useTranslation, localeNames } from "@/hooks/use-translation";
 
 // Remove usage of 't' destructuring since 't' is not exported from i18n.ts
 // Replace usage of 't' with direct calls to useTranslation hook
