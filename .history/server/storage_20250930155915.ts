@@ -680,7 +680,8 @@ export class MemStorage implements IStorage {
     return Array.from(this.appointments.values()).filter(
       appointment => 
         appointment.createdBy === userId || 
-        (appointment.attendees && Array.isArray(appointment.attendees) && appointment.attendees.includes(userId))
+        appointment.hostId === userId || 
+        (appointment.attendees && appointment.attendees.includes(userId))
     );
   }
 
@@ -696,12 +697,7 @@ export class MemStorage implements IStorage {
       meetingLink: appointment.meetingLink ?? null,
       isVideoMeeting: appointment.isVideoMeeting ?? false,
       attendees: appointment.attendees ?? [],
-      talentId: appointment.talentId ?? null,
-      clubId: appointment.clubId ?? null,
-      agentId: appointment.agentId ?? null,
-      doctorId: appointment.doctorId ?? null,
-      createdAt: new Date(),
-      updatedAt: null
+      createdAt: new Date()
     };
     this.appointments.set(id, newAppointment);
     return newAppointment;
@@ -731,7 +727,7 @@ export class MemStorage implements IStorage {
       throw new Error("الموعد غير موجود");
     }
 
-    const attendees = [...(Array.isArray(appointment.attendees) ? appointment.attendees : [])];
+    const attendees = [...(appointment.attendees || [])];
     if (!attendees.includes(userId)) {
       attendees.push(userId);
     }
@@ -776,12 +772,12 @@ export class MemStorage implements IStorage {
       ...session,
       id,
       status: session.status ?? "scheduled",
+      description: session.description ?? null,
       appointmentId: session.appointmentId ?? null,
-      participants: session.participants ?? "[]",
-      startTime: session.startTime ?? null,
-      endTime: session.endTime ?? null,
-      recordingUrl: session.recordingUrl ?? null,
-      notes: session.notes ?? null
+      attendees: session.attendees ?? [],
+      actualStartTime: null,
+      actualEndTime: null,
+      createdAt: new Date()
     };
     this.videoSessions.set(id, newSession);
     return newSession;
@@ -793,16 +789,16 @@ export class MemStorage implements IStorage {
       throw new Error("جلسة الفيديو غير موجودة");
     }
 
-    // If status changed to active and start time is not set, set it now
-    let startTime = session.startTime;
-    if (status === "active" && !startTime) {
-      startTime = new Date();
+    // If status changed to active and actual start time is not set, set it now
+    let actualStartTime = session.actualStartTime;
+    if (status === "active" && !actualStartTime) {
+      actualStartTime = new Date();
     }
 
     const updatedSession: VideoSession = {
       ...session,
       status,
-      startTime
+      actualStartTime
     };
     this.videoSessions.set(id, updatedSession);
     return updatedSession;
@@ -817,7 +813,7 @@ export class MemStorage implements IStorage {
     const updatedSession: VideoSession = {
       ...session,
       status: "completed",
-      endTime: endTime
+      actualEndTime: endTime
     };
     this.videoSessions.set(id, updatedSession);
     return updatedSession;
@@ -918,7 +914,7 @@ export class MemStorage implements IStorage {
         currentClub: "النادي الأهلي الشرقي",
         experience: "5 سنوات كمحترف، بدأ مسيرته مع فريق الشباب وتدرج للفريق الأول",
         achievements: "هداف الدوري موسم 2022، أفضل لاعب شاب 2021",
-        rating: "4.8",
+        rating: 4.8,
         reviewCount: 42,
         salary: "$10,000-15,000 شهرياً",
         transferFee: "$2.5 مليون",
@@ -943,7 +939,7 @@ export class MemStorage implements IStorage {
         currentClub: "نادي النصر",
         experience: "7 سنوات في الدوري السعودي، لعب 3 مواسم مع نادي الهلال",
         achievements: "هداف الدوري السعودي 2023، فائز بكأس الخليج 2022",
-        rating: "4.9",
+        rating: 4.9,
         reviewCount: 55,
         salary: "$20,000-25,000 شهرياً",
         transferFee: "$3.5 مليون",
@@ -970,7 +966,7 @@ export class MemStorage implements IStorage {
         currentClub: "نادي الاتحاد الرياضي",
         experience: "15 سنة خبرة في التدريب، عمل مع 4 أندية مختلفة",
         achievements: "بطل الدوري مرتين، كأس الخليج مرة واحدة",
-        rating: "4.9",
+        rating: 4.9,
         reviewCount: 68,
         salary: "$25,000-30,000 شهرياً",
         transferFee: "تفاوض",
@@ -995,7 +991,7 @@ export class MemStorage implements IStorage {
         currentClub: "نادي الوصل",
         experience: "8 سنوات مع الفريق الأول، تدرج من فرق الناشئين",
         achievements: "أفضل حارس في الدوري 2023، 10 مباريات نظيفة الموسم الماضي",
-        rating: "4.7",
+        rating: 4.7,
         reviewCount: 35,
         salary: "$18,000-22,000 شهرياً",
         transferFee: "$1.8 مليون",
@@ -1025,7 +1021,7 @@ export class MemStorage implements IStorage {
         education: "شهادة تدريب حراس مرمى من الاتحاد الدولي لكرة القدم (FIFA)\nشهادة تدريب متقدمة من الاتحاد الأفريقي لكرة القدم",
         licenses: "رخصة تدريب من الاتحاد المصري لكرة القدم\nرخصة تدريب دولية من الفيفا",
         skills: "خبرة طويلة في تدريب حراس المرمى\nفهم عميق لتكتيكات وفنيات حراسة المرمى\nمهارات قيادية عالية\nقدرة على تطوير مواهب الحراس الشباب\nمهارات تحليلية قوية",
-        rating: "4.9",
+        rating: 4.9,
         reviewCount: 120,
         salary: "$30,000-40,000 شهرياً",
         transferFee: "تفاوض",

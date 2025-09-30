@@ -1025,7 +1025,7 @@ export class MemStorage implements IStorage {
         education: "شهادة تدريب حراس مرمى من الاتحاد الدولي لكرة القدم (FIFA)\nشهادة تدريب متقدمة من الاتحاد الأفريقي لكرة القدم",
         licenses: "رخصة تدريب من الاتحاد المصري لكرة القدم\nرخصة تدريب دولية من الفيفا",
         skills: "خبرة طويلة في تدريب حراس المرمى\nفهم عميق لتكتيكات وفنيات حراسة المرمى\nمهارات قيادية عالية\nقدرة على تطوير مواهب الحراس الشباب\nمهارات تحليلية قوية",
-        rating: "4.9",
+        rating: 4.9,
         reviewCount: 120,
         salary: "$30,000-40,000 شهرياً",
         transferFee: "تفاوض",
@@ -1038,7 +1038,7 @@ export class MemStorage implements IStorage {
     ];
 
     talentsData.forEach(talent => {
-      this.createTalent(talent);
+      return this.createTalent(talent);
     });
 
     // Add contract options for talents
