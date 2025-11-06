@@ -8,60 +8,48 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
-
-// بيانات الترجمة المبسطة
-const translations = {
-  ar: {
-    title: 'صفحة اختبار الترجمة',
-    description: 'هذه الصفحة لاختبار نظام تغيير اللغة',
-    button: 'تغيير إلى الإنجليزية',
-    welcome: 'مرحباً بك في موقع Soccer Hunter',
-    paragraph: 'هذا النص باللغة العربية ويجب أن يتغير عند تبديل اللغة',
-  },
-  en: {
-    title: 'Translation Test Page',
-    description: 'This page is for testing the language switching system',
-    button: 'Switch to Arabic',
-    welcome: 'Welcome to Soccer Hunter',
-    paragraph: 'This text is in English and should change when switching languages',
-  }
-};
+import { useTranslation } from '@/hooks/use-translation';
 
 export default function TestTranslation() {
-  const [lang, setLang] = useState<'ar' | 'en'>('ar');
+  const { locale, setLocale, t } = useTranslation();
   
   // وظيفة تبديل اللغة بين العربية والإنجليزية
   const toggleLanguage = () => {
-    const newLang = lang === 'ar' ? 'en' : 'ar';
-    setLang(newLang);
-    document.documentElement.dir = newLang === 'ar' ? 'rtl' : 'ltr';
-    document.documentElement.lang = newLang;
+    const newLang = locale === 'ar' ? 'en' : 'ar';
+    if (setLocale) {
+      setLocale(newLang);
+    }
   };
-  
-  // الحصول على النصوص المترجمة حسب اللغة المحددة
-  const t = translations[lang];
   
   return (
     <div className="container mx-auto py-10">
       <Card className="w-full max-w-lg mx-auto">
         <CardHeader>
-          <CardTitle>{t.title}</CardTitle>
-          <CardDescription>{t.description}</CardDescription>
+          <CardTitle>{t('appName')}</CardTitle>
+          <CardDescription>{t('tagline')}</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
-          <h2 className="text-xl font-bold">{t.welcome}</h2>
-          <p>{t.paragraph}</p>
+          <h2 className="text-xl font-bold">{t('welcomeMessage')}</h2>
+          <p>{t('strikerDescription')}</p>
           <div className="flex items-center gap-2">
-            <div className={`w-6 h-6 rounded-full ${lang === 'ar' ? 'bg-green-500' : 'bg-gray-300'}`}></div>
-            <span>العربية</span>
+            <div className={`w-6 h-6 rounded-full ${locale === 'ar' ? 'bg-green-500' : 'bg-gray-300'}`}></div>
+            <span>{t('language')}</span>
           </div>
           <div className="flex items-center gap-2">
-            <div className={`w-6 h-6 rounded-full ${lang === 'en' ? 'bg-green-500' : 'bg-gray-300'}`}></div>
-            <span>English</span>
+            <div className={`w-6 h-6 rounded-full ${locale === 'en' ? 'bg-green-500' : 'bg-gray-300'}`}></div>
+            <span>{t('english')}</span>
+          </div>
+          <div className="text-sm text-gray-600">
+            <p><strong>{t('home')}:</strong> {t('home')}</p>
+            <p><strong>{t('players')}:</strong> {t('players')}</p>
+            <p><strong>{t('coaches')}:</strong> {t('coaches')}</p>
+            <p><strong>{t('clubs')}:</strong> {t('clubs')}</p>
           </div>
         </CardContent>
         <CardFooter>
-          <Button onClick={toggleLanguage}>{t.button}</Button>
+          <Button onClick={toggleLanguage}>
+            {locale === 'ar' ? 'Switch to English' : 'التبديل إلى العربية'}
+          </Button>
         </CardFooter>
       </Card>
     </div>

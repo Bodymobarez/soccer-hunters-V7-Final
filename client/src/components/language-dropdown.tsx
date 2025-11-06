@@ -43,11 +43,11 @@ const LanguageDropdown = () => {
   const { locale, setLocale } = useTranslation();
 
   // استخدام useState للتأكد من التحديث بعد التحميل
-  const [currentLang, setCurrentLang] = useState<Locale>("en");
+  const [currentLang, setCurrentLang] = useState<Locale>("ar");
 
   // الحصول على اللغة الحالية عند تحميل المكون
   useEffect(() => {
-    const storedLanguage = localStorage.getItem("app-locale") as Locale;
+    const storedLanguage = localStorage.getItem("siteLanguage") as Locale;
     if (storedLanguage && Object.keys(localeNames).includes(storedLanguage)) {
       setCurrentLang(storedLanguage);
     } else if (locale) {
@@ -64,7 +64,7 @@ const LanguageDropdown = () => {
       setCurrentLang(language);
 
       // حفظ اللغة في التخزين المحلي بطريقة متزامنة
-      localStorage.setItem("app-locale", language);
+      localStorage.setItem("siteLanguage", language);
 
       // تحديث اتجاه المستند ولغته مباشرة
       document.documentElement.dir = language === "ar" ? "rtl" : "ltr";

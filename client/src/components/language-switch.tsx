@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
-import { LANGUAGE_NAMES, Language } from '@/hooks/use-simple-translate';
+import { useTranslation, localeNames, type Locale } from '@/hooks/use-translation';
 
 // الأعلام للغات المدعومة
 const flags = {
@@ -15,43 +15,26 @@ const flags = {
 };
 
 // قائمة اللغات المدعومة للعرض في الواجهة
-const supportedLanguages: Language[] = ['ar', 'en', 'fr', 'es', 'de', 'pt', 'it', 'la'];
+const supportedLanguages: Locale[] = ['ar', 'en', 'fr', 'es', 'de', 'pt', 'it', 'la'];
 
 // مكون مبسط لتبديل اللغة
 const LanguageSwitch = () => {
-  // استخدام useState للتأكد من التحديث بعد التحميل
-  const [currentLang, setCurrentLang] = useState<Language>('ar');
-  
-  // الحصول على اللغة الحالية عند تحميل المكون
-  useEffect(() => {
-    const storedLanguage = localStorage.getItem('siteLanguage') as Language;
-    if (storedLanguage && Object.keys(LANGUAGE_NAMES).includes(storedLanguage)) {
-      setCurrentLang(storedLanguage);
-    }
-  }, []);
+  // استخدام هوك الترجمة الرئيسي
+  const { locale, setLocale } = useTranslation();
   
   // وظيفة تغيير اللغة
-  const changeLanguage = (language: Language) => {
+  const changeLanguage = (language: Locale) => {
     console.log('🌐 تغيير اللغة إلى:', language);
     
-    // حفظ اللغة في التخزين المحلي
-    localStorage.setItem('siteLanguage', language);
+    // استخدام دالة setLocale من هوك الترجمة
+    if (setLocale) {
+      setLocale(language);
+    }
     
-    // تغيير اتجاه الصفحة واللغة
-    document.documentElement.dir = language === 'ar' ? 'rtl' : 'ltr';
-    document.documentElement.lang = language;
-    
-    // تحديث المتغير العام للغة
-    window.currentSiteLanguage = language;
-    
-    // تحديث حالة المكون
-    setCurrentLang(language);
-    
-    // إضافة تأخير بسيط للتأكد من حفظ الإعدادات قبل إعادة التحميل
-    setTimeout(() => {
-      // إعادة تحميل الصفحة لتطبيق التغييرات
-      window.location.reload();
-    }, 100);
+    // إطلاق حدث لإعلام جميع المكونات بتغيير اللغة
+    const event = new Event("languageChanged");
+    window.dispatchEvent(event);
+    console.log(`✅ تم تغيير اللغة إلى ${language} دون إعادة تحميل الصفحة`);
   };
   
   return (
@@ -59,14 +42,14 @@ const LanguageSwitch = () => {
       {supportedLanguages.map((lang) => (
         <Button
           key={lang}
-          variant={currentLang === lang ? "default" : "outline"}
+          variant={locale === lang ? "default" : "outline"}
           size="sm"
           onClick={() => changeLanguage(lang)}
           className="flex items-center gap-1 px-1.5 py-0.5 h-8 text-xs"
-          title={`تغيير اللغة إلى ${LANGUAGE_NAMES[lang]}`}
+          title={`تغيير اللغة إلى ${localeNames[lang]}`}
         >
           <span>{flags[lang]}</span>
-          <span className="hidden md:inline">{LANGUAGE_NAMES[lang]}</span>
+          <span className="hidden md:inline">{localeNames[lang]}</span>
         </Button>
       ))}
     </div>

@@ -57,7 +57,8 @@ class SimplifiedWebRTC {
       
       // Create WebSocket connection
       const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-      const wsUrl = `${protocol}//${window.location.host}/ws`;
+      const host = window.location.host || 'localhost:3001';
+      const wsUrl = `${protocol}//${host}/ws`;
       
       try {
         this.ws = new WebSocket(wsUrl);

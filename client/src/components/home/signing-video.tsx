@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { motion } from "framer-motion";
-import translations from "@/lib/translations";
+import { useTranslation } from "@/hooks/use-translation";
 
 type SigningVideoData = {
   images: string[];
@@ -9,52 +9,11 @@ type SigningVideoData = {
 };
 
 export default function SigningVideo() {
-  // State to hold current language
-  const [currentLanguage, setCurrentLanguage] = useState(localStorage.getItem('siteLanguage') || 'ar');
+  const { t } = useTranslation();
   const [videoData, setVideoData] = useState<SigningVideoData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
-  
-  // Use effect to listen for storage changes
-  useEffect(() => {
-    // Initial language setup
-    const storedLanguage = localStorage.getItem('siteLanguage') || 'ar';
-    setCurrentLanguage(storedLanguage);
-    
-    // Set up storage event listener
-    const handleStorageChange = (event: StorageEvent) => {
-      if (event.key === 'siteLanguage' || event.key === 'app-locale') {
-        const newLanguage = localStorage.getItem('siteLanguage') || 'ar';
-        setCurrentLanguage(newLanguage);
-      }
-    };
-    
-    // Add storage event listener
-    window.addEventListener('storage', handleStorageChange);
-    
-    // Setup interval to check for language changes
-    const checkInterval = setInterval(() => {
-      const currentStoredLang = localStorage.getItem('siteLanguage') || 'ar';
-      if (currentStoredLang !== currentLanguage) {
-        setCurrentLanguage(currentStoredLang);
-      }
-    }, 500); // Check every 500ms
-    
-    // Cleanup function
-    return () => {
-      window.removeEventListener('storage', handleStorageChange);
-      clearInterval(checkInterval);
-    };
-  }, [currentLanguage]);
-  
-  // Get translations for the current language
-  const currentTranslations = translations[currentLanguage] || translations['ar'];
-
-  // Direct translation function
-  const t = (key: string, fallback = "") => {
-    return currentTranslations[key] || fallback || key;
-  };
 
   useEffect(() => {
     const fetchVideoData = async () => {
@@ -70,7 +29,7 @@ export default function SigningVideo() {
         setVideoData(data);
       } catch (err: any) {
         console.error("Error fetching signing video data:", err);
-        setError(err.message || "حدث خطأ أثناء تحميل البيانات");
+        setError(err.message || t('errorLoadingData'));
       } finally {
         setLoading(false);
       }
@@ -119,10 +78,10 @@ export default function SigningVideo() {
       <section className="py-12 px-4 bg-gradient-to-r from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800">
         <div className="max-w-6xl mx-auto text-center">
           <h2 className="text-3xl font-bold mb-4 text-gray-900 dark:text-white">
-            {t("signingVideo.errorTitle", "عذراً، لم نتمكن من تحميل فيديو التوقيع")}
+            {t("signingVideoErrorTitle")}
           </h2>
           <p className="text-lg text-gray-600 dark:text-gray-300">
-            {error || t("signingVideo.errorMessage", "يرجى المحاولة مرة أخرى لاحقاً")}
+            {error || t("signingVideoErrorMessage")}
           </p>
         </div>
       </section>
@@ -134,13 +93,10 @@ export default function SigningVideo() {
       <div className="max-w-6xl mx-auto">
         <div className="text-center mb-10">
           <h2 className="text-4xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-primary to-secondary">
-            {t("signingVideo.title", "لحظات توقيع العقود")}
+            {t("signingVideoTitle")}
           </h2>
           <p className="text-xl text-gray-600 dark:text-gray-300">
-            {t(
-              "signingVideo.subtitle",
-              "شاهد أبرز لحظات تعاقد النجوم مع الأندية العالمية"
-            )}
+            {t("signingVideoSubtitle")}
           </p>
         </div>
 
@@ -159,7 +115,7 @@ export default function SigningVideo() {
               >
                 <img
                   src={imageSrc}
-                  alt={`${t("signingVideo.imageAlt", "صورة توقيع عقد")} ${index + 1}`}
+                  alt={`${t("signingVideoImageAlt")} ${index + 1}`}
                   className="w-full h-full object-cover"
                 />
               </motion.div>
@@ -187,11 +143,11 @@ export default function SigningVideo() {
               className="h-full flex flex-col justify-center"
             >
               <h3 className="text-2xl font-bold mb-6 text-gray-900 dark:text-white">
-                {t("signingVideo.captionTitle", "قصة التوقيع")}
+                {t("signingVideoCaptionTitle")}
               </h3>
               <p className="text-lg text-gray-700 dark:text-gray-200 leading-relaxed">
                 {videoData.captions[currentImageIndex] || 
-                  t("signingVideo.defaultCaption", "لحظة تاريخية في مسيرة اللاعب مع توقيع عقد جديد يفتح له آفاقاً جديدة في عالم كرة القدم.")
+                  t("signingVideoDefaultCaption")
                 }
               </p>
               <div className="mt-8">
@@ -199,7 +155,7 @@ export default function SigningVideo() {
                   className="px-6 py-3 bg-primary hover:bg-primary/90 text-white rounded-md shadow-md transition-transform transform hover:scale-105"
                   onClick={() => window.location.href = '/talents'}
                 >
-                  {t("signingVideo.exploreButton", "استكشف المواهب")}
+                  {t("signingVideoExploreButton")}
                 </button>
               </div>
             </motion.div>

@@ -2,7 +2,7 @@ import React, { createContext, useContext, useState, ReactNode, useEffect } from
 
 export type Locale = "ar" | "en" | "fr" | "es" | "de" | "pt" | "it" | "la";
 
-export const defaultLocale: Locale = "en";
+export const defaultLocale: Locale = "ar";
 
 export const locales: Locale[] = [
   "ar",
@@ -42,7 +42,7 @@ const TranslationContext = createContext<TranslationContextType | undefined>(
 );
 
 export function TranslationProvider({ children }: { children: ReactNode }) {
-  const STORAGE_KEY = "app-locale";
+  const STORAGE_KEY = "siteLanguage";
 
   // Initialize locale from localStorage or default
   const getInitialLocale = (): Locale => {

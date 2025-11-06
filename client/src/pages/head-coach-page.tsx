@@ -750,12 +750,12 @@ export default function HeadCoachPage() {
                 <SelectValue placeholder="Experience Level" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">All Experience Levels</SelectItem>
-                <SelectItem value="emerging">Emerging (0-8 years)</SelectItem>
+                <SelectItem value="all">{t('allExperienceLevels')}</SelectItem>
+                <SelectItem value="emerging">{t('emerging')} (0-8 {t('years')})</SelectItem>
                 <SelectItem value="experienced">
                   Experienced (8-15 years)
                 </SelectItem>
-                <SelectItem value="veteran">Veteran (15+ years)</SelectItem>
+                <SelectItem value="veteran">{t('veteran')} (15+ {t('years')})</SelectItem>
               </SelectContent>
             </Select>
 
@@ -767,9 +767,9 @@ export default function HeadCoachPage() {
                 <SelectValue placeholder="Availability" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">All Coaches</SelectItem>
-                <SelectItem value="available">Available Now</SelectItem>
-                <SelectItem value="contracted">Currently Contracted</SelectItem>
+                <SelectItem value="all">{t('allCoachesFilter')}</SelectItem>
+                <SelectItem value="available">{t('availableNow')}</SelectItem>
+                <SelectItem value="contracted">{t('currentlyContracted')}</SelectItem>
               </SelectContent>
             </Select>
 
@@ -778,11 +778,11 @@ export default function HeadCoachPage() {
                 <SelectValue placeholder="Tactical Style" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">All Tactical Styles</SelectItem>
-                <SelectItem value="possession">Possession-based</SelectItem>
-                <SelectItem value="pressing">High Pressing</SelectItem>
-                <SelectItem value="counter">Counter-Attacking</SelectItem>
-                <SelectItem value="defensive">Defensive</SelectItem>
+                <SelectItem value="all">{t('allTacticalStyles')}</SelectItem>
+                <SelectItem value="possession">{t('possessionBased')}</SelectItem>
+                <SelectItem value="pressing">{t('highPressing')}</SelectItem>
+                <SelectItem value="counter">{t('counterAttacking')}</SelectItem>
+                <SelectItem value="defensive">{t('defensive')}</SelectItem>
               </SelectContent>
             </Select>
 

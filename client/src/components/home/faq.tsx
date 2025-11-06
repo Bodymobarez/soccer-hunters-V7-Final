@@ -1,10 +1,9 @@
-import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Link } from "wouter";
-import translations from "@/lib/translations";
+import { useTranslation } from "@/hooks/use-translation";
 
 interface FAQ {
   id: number;
@@ -14,49 +13,7 @@ interface FAQ {
 }
 
 export function FAQ() {
-  // State to hold current language
-  const [currentLanguage, setCurrentLanguage] = useState(localStorage.getItem('siteLanguage') || 'ar');
-  
-  // Use effect to listen for storage changes
-  useEffect(() => {
-    // Initial language setup
-    const storedLanguage = localStorage.getItem('siteLanguage') || 'ar';
-    setCurrentLanguage(storedLanguage);
-    
-    // Set up storage event listener
-    const handleStorageChange = (event: StorageEvent) => {
-      if (event.key === 'siteLanguage' || event.key === 'app-locale') {
-        const newLanguage = localStorage.getItem('siteLanguage') || 'ar';
-        setCurrentLanguage(newLanguage);
-      }
-    };
-    
-    // Add storage event listener
-    window.addEventListener('storage', handleStorageChange);
-    
-    // Setup interval to check for language changes (necessary because local storage events 
-    // don't trigger for changes in the same tab)
-    const checkInterval = setInterval(() => {
-      const currentStoredLang = localStorage.getItem('siteLanguage') || 'ar';
-      if (currentStoredLang !== currentLanguage) {
-        setCurrentLanguage(currentStoredLang);
-      }
-    }, 500); // Check every 500ms
-    
-    // Cleanup function
-    return () => {
-      window.removeEventListener('storage', handleStorageChange);
-      clearInterval(checkInterval);
-    };
-  }, [currentLanguage]);
-  
-  // Get translations for the current language
-  const currentTranslations = translations[currentLanguage] || translations['ar'];
-
-  // Direct translation function
-  const translate = (key: string) => {
-    return currentTranslations[key] || key;
-  };
+  const { t } = useTranslation();
   
   const { data: faqs = [], isLoading } = useQuery<FAQ[]>({
     queryKey: ['/api/faqs'],
@@ -67,10 +24,10 @@ export function FAQ() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center">
           <h2 className="text-3xl font-extrabold text-gray-900 font-serif sm:text-4xl">
-            {translate('faqTitle')}
+            {t('faqTitle')}
           </h2>
           <p className="mt-3 max-w-2xl mx-auto text-lg text-gray-500 sm:mt-4">
-            {translate('faqSubtitle')}
+            {t('faqSubtitle')}
           </p>
         </div>
 
@@ -108,9 +65,9 @@ export function FAQ() {
 
           <div className="text-center mt-8">
             <p className="text-gray-600">
-              {translate('faqNoAnswer')}{' '}
+              {t('faqNoAnswer')}{' '}
               <Link href="/contact" className="text-primary hover:text-primary-700 font-medium">
-                {translate('contactSupport')}
+                {t('contactSupport')}
               </Link>
             </p>
           </div>

@@ -494,6 +494,89 @@ body[data-direction="ltr"] textarea {
     animation: goal-celebration 0.8s ease-in-out;
   }
 
+  /* 8K Resolution Enhancements */
+  @media (min-width: 2560px) {
+    html {
+      font-size: 18px;
+    }
+  }
+
+  @media (min-width: 3840px) {
+    html {
+      font-size: 24px;
+    }
+  }
+
+  /* High DPI Display Enhancements */
+  @media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+    * {
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+  }
+
+  /* Smooth Animations for 8K */
+  @keyframes float {
+    0%, 100% {
+      transform: translateY(0px);
+    }
+    50% {
+      transform: translateY(-20px);
+    }
+  }
+
+  @keyframes shimmer {
+    0% {
+      background-position: -1000px 0;
+    }
+    100% {
+      background-position: 1000px 0;
+    }
+  }
+
+  .animate-float {
+    animation: float 6s ease-in-out infinite;
+  }
+
+  .animate-shimmer {
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(255, 255, 255, 0.4),
+      transparent
+    );
+    background-size: 1000px 100%;
+    animation: shimmer 3s infinite;
+  }
+
+  /* Glassmorphism Effect */
+  .glass-effect {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+  }
+
+  /* Gradient Animation */
+  @keyframes gradient {
+    0%, 100% {
+      background-position: 0% 50%;
+    }
+    50% {
+      background-position: 100% 50%;
+    }
+  }
+  .animate-gradient {
+    background-size: 200% 200%;
+    animation: gradient 3s ease infinite;
+  }
+  .delay-1000 {
+    animation-delay: 1s;
+  }
+  .delay-2000 {
+    animation-delay: 2s;
+  }
+
   /* Professional Stadium Lighting Effect */
   .stadium-lights {
     position: relative;
@@ -563,8 +646,84 @@ body[data-direction="ltr"] textarea {
       font-size: 1.75rem;
     }
 
+    h3 {
+      font-size: 1.5rem;
+    }
+
     p {
       line-height: 1.6;
+    }
+
+    /* تحسينات للبطاقات */
+    .card {
+      margin-bottom: 1rem;
+    }
+
+    /* تحسينات للأزرار */
+    .btn {
+      min-height: 44px; /* الحد الأدنى للمساحة القابلة للنقر */
+    }
+
+    /* تحسينات للنماذج */
+    input, select, textarea {
+      min-height: 44px;
+      font-size: 16px; /* منع التكبير التلقائي في iOS */
+    }
+
+    /* تحسينات للشبكات */
+    .grid {
+      gap: 1rem;
+    }
+
+    /* تحسينات للهوامش */
+    .container {
+      padding-left: 1rem;
+      padding-right: 1rem;
+    }
+
+    /* تحسينات للقوائم */
+    .nav-menu {
+      padding: 0.5rem;
+    }
+
+    .nav-menu li {
+      margin-bottom: 0.5rem;
+    }
+  }
+
+  /* تنسيقات للشاشات الصغيرة جداً */
+  @media (max-width: 480px) {
+    h1 {
+      font-size: 1.75rem;
+    }
+
+    h2 {
+      font-size: 1.5rem;
+    }
+
+    h3 {
+      font-size: 1.25rem;
+    }
+
+    .container {
+      padding-left: 0.75rem;
+      padding-right: 0.75rem;
+    }
+
+    /* تقليل المسافات في الموبايل الصغير */
+    .py-8 {
+      padding-top: 1.5rem;
+      padding-bottom: 1.5rem;
+    }
+
+    .py-12 {
+      padding-top: 2rem;
+      padding-bottom: 2rem;
+    }
+
+    .py-16 {
+      padding-top: 2.5rem;
+      padding-bottom: 2.5rem;
     }
   }
 }

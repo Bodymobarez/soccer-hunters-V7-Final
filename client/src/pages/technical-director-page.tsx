@@ -499,31 +499,31 @@ export default function TechnicalDirectorPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-primary/2 to-accent/5">
-      <div className="container py-8">
+      <div className="container py-6 sm:py-8 px-3 sm:px-4">
         {/* Professional Header Section */}
-        <div className="relative mb-12 text-center">
+        <div className="relative mb-8 sm:mb-12 text-center">
           {/* Background Elements */}
-          <div className="absolute inset-0 bg-gradient-to-r from-primary/10 via-accent/5 to-secondary/10 rounded-3xl blur-3xl" />
+          <div className="absolute inset-0 bg-gradient-to-r from-primary/10 via-accent/5 to-secondary/10 rounded-2xl sm:rounded-3xl blur-3xl" />
 
-          <div className="relative bg-gradient-to-br from-card via-card/95 to-card/90 border border-primary/20 rounded-2xl p-8 shadow-2xl">
-            <div className="mb-6 mx-auto w-24 h-24 bg-gradient-to-br from-primary via-accent to-secondary rounded-full flex items-center justify-center shadow-lg transform rotate-3 hover:rotate-0 transition-transform duration-500">
-              <Brain className="h-12 w-12 text-white" />
+          <div className="relative bg-gradient-to-br from-card via-card/95 to-card/90 border border-primary/20 rounded-xl sm:rounded-2xl p-6 sm:p-8 shadow-2xl">
+            <div className="mb-4 sm:mb-6 mx-auto w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 bg-gradient-to-br from-primary via-accent to-secondary rounded-full flex items-center justify-center shadow-lg transform rotate-3 hover:rotate-0 transition-transform duration-500">
+              <Brain className="h-8 w-8 sm:h-10 sm:w-10 md:h-12 md:w-12 text-white" />
             </div>
 
-            <h1 className="mb-4 text-5xl font-extrabold">
+            <h1 className="mb-3 sm:mb-4 text-3xl sm:text-4xl md:text-5xl font-extrabold">
               <span className="bg-gradient-to-r from-primary via-accent to-secondary bg-clip-text text-transparent">
                 Elite Technical Directors
               </span>
             </h1>
 
-            <p className="mx-auto max-w-3xl text-lg text-muted-foreground leading-relaxed">
+            <p className="mx-auto max-w-3xl text-base sm:text-lg text-muted-foreground leading-relaxed px-4">
               Connect with world-class technical directors who shape the future
               of football through strategic vision, innovative recruitment, and
               exceptional leadership in elite sports organizations.
             </p>
 
             {/* Enhanced Stats Dashboard */}
-            <div className="mt-10 grid grid-cols-2 md:grid-cols-4 gap-6 max-w-5xl mx-auto">
+            <div className="mt-8 sm:mt-10 grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 md:gap-6 max-w-5xl mx-auto">
               <div className="relative group">
                 <div className="absolute inset-0 bg-gradient-to-r from-primary/20 to-accent/20 rounded-xl blur-lg group-hover:blur-xl transition-all duration-300" />
                 <div className="relative bg-card/90 backdrop-blur rounded-xl p-6 border border-primary/30 shadow-lg hover:shadow-xl transition-all duration-300">
@@ -606,10 +606,10 @@ export default function TechnicalDirectorPage() {
           </div>
 
           {/* Enhanced Filters */}
-          <div className="flex flex-wrap items-center gap-6 justify-center bg-card/50 backdrop-blur rounded-xl p-6 border border-border/50 shadow-lg">
-            <div className="flex items-center gap-3">
-              <Filter className="h-5 w-5 text-primary" />
-              <span className="text-sm font-semibold text-foreground">
+          <div className="flex flex-col sm:flex-row flex-wrap items-center gap-3 sm:gap-6 justify-center bg-card/50 backdrop-blur rounded-xl p-4 sm:p-6 border border-border/50 shadow-lg">
+            <div className="flex items-center gap-2 sm:gap-3">
+              <Filter className="h-4 w-4 sm:h-5 sm:w-5 text-primary" />
+              <span className="text-xs sm:text-sm font-semibold text-foreground">
                 Advanced Filters:
               </span>
             </div>
@@ -622,10 +622,10 @@ export default function TechnicalDirectorPage() {
                 <SelectValue placeholder="Experience Level" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">All Experience Levels</SelectItem>
-                <SelectItem value="junior">Emerging (5-8 years)</SelectItem>
-                <SelectItem value="mid">Experienced (8-15 years)</SelectItem>
-                <SelectItem value="senior">Elite (15+ years)</SelectItem>
+                <SelectItem value="all">{t('allExperienceLevels')}</SelectItem>
+                <SelectItem value="junior">{t('emerging')} (5-8 {t('years')})</SelectItem>
+                <SelectItem value="mid">{t('experienced')} (8-15 {t('years')})</SelectItem>
+                <SelectItem value="senior">{t('elite')} (15+ {t('years')})</SelectItem>
               </SelectContent>
             </Select>
 
@@ -637,9 +637,9 @@ export default function TechnicalDirectorPage() {
                 <SelectValue placeholder="Availability" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">All Directors</SelectItem>
-                <SelectItem value="available">Available Now</SelectItem>
-                <SelectItem value="contracted">Currently Contracted</SelectItem>
+                <SelectItem value="all">{t('allDirectors')}</SelectItem>
+                <SelectItem value="available">{t('availableNow')}</SelectItem>
+                <SelectItem value="contracted">{t('currentlyContracted')}</SelectItem>
               </SelectContent>
             </Select>
 
@@ -652,11 +652,11 @@ export default function TechnicalDirectorPage() {
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="name">Name</SelectItem>
-                  <SelectItem value="experience">Experience</SelectItem>
-                  <SelectItem value="rating">Rating</SelectItem>
-                  <SelectItem value="trophies">Trophies Won</SelectItem>
-                  <SelectItem value="success">Success Rate</SelectItem>
+                  <SelectItem value="name">{t('name')}</SelectItem>
+                  <SelectItem value="experience">{t('experience')}</SelectItem>
+                  <SelectItem value="rating">{t('rating')}</SelectItem>
+                  <SelectItem value="trophies">{t('trophiesWon')}</SelectItem>
+                  <SelectItem value="success">{t('successRate')}</SelectItem>
                 </SelectContent>
               </Select>
 
@@ -709,7 +709,7 @@ export default function TechnicalDirectorPage() {
 
           {/* Executive Grid View */}
           <TabsContent value="grid" className="mt-6">
-            <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-2">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-4 sm:gap-6 md:gap-8">
               {filteredDirectors.map((director) => (
                 <Card
                   key={director.id}
@@ -818,7 +818,7 @@ export default function TechnicalDirectorPage() {
                           <div className="font-semibold text-yellow-600">
                             {director.trophiesWon}
                           </div>
-                          <div className="text-muted-foreground">Trophies</div>
+                          <div className="text-muted-foreground">{t('trophies')}</div>
                         </div>
                       </div>
                       <div className="flex items-center gap-2 bg-accent/5 rounded-lg p-2">
@@ -827,7 +827,7 @@ export default function TechnicalDirectorPage() {
                           <div className="font-semibold text-green-600">
                             {director.successRate}%
                           </div>
-                          <div className="text-muted-foreground">Success</div>
+                          <div className="text-muted-foreground">{t('success')}</div>
                         </div>
                       </div>
                       <div className="flex items-center gap-2 bg-secondary/5 rounded-lg p-2">
@@ -836,7 +836,7 @@ export default function TechnicalDirectorPage() {
                           <div className="font-semibold text-blue-600">
                             {director.playersManaged}
                           </div>
-                          <div className="text-muted-foreground">Players</div>
+                          <div className="text-muted-foreground">{t('players')}</div>
                         </div>
                       </div>
                       <div className="flex items-center gap-2 bg-purple-100/50 rounded-lg p-2">
@@ -845,7 +845,7 @@ export default function TechnicalDirectorPage() {
                           <div className="font-semibold text-purple-600">
                             {director.budgetManaged}
                           </div>
-                          <div className="text-muted-foreground">Budget</div>
+                          <div className="text-muted-foreground">{t('budget')}</div>
                         </div>
                       </div>
                     </div>

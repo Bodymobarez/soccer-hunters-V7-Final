@@ -456,50 +456,50 @@ export default function StrikerPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-red-50 via-orange-50 to-white">
-      <div className="container mx-auto px-4 py-8">
+      <div className="container mx-auto px-3 sm:px-4 py-6 sm:py-8">
         {/* Hero Section */}
-        <div className="text-center mb-12">
-          <div className="flex items-center justify-center mb-6">
+        <div className="text-center mb-8 sm:mb-12">
+          <div className="flex items-center justify-center mb-4 sm:mb-6">
             <div className="relative">
-              <div className="w-20 h-20 bg-gradient-to-r from-red-600 to-orange-600 rounded-2xl flex items-center justify-center shadow-xl">
-                <Target className="w-12 h-12 text-white" />
+              <div className="w-16 h-16 sm:w-20 sm:h-20 bg-gradient-to-r from-red-600 to-orange-600 rounded-2xl flex items-center justify-center shadow-xl">
+                <Target className="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 text-white" />
               </div>
-              <div className="absolute -top-2 -right-2 w-8 h-8 bg-yellow-400 rounded-full flex items-center justify-center">
-                <Goal className="w-5 h-5 text-white" />
+              <div className="absolute -top-1 -right-1 sm:-top-2 sm:-right-2 w-6 h-6 sm:w-8 sm:h-8 bg-yellow-400 rounded-full flex items-center justify-center">
+                <Goal className="w-3 h-3 sm:w-4 sm:h-4 md:w-5 md:h-5 text-white" />
               </div>
             </div>
           </div>
-          <h1 className="text-5xl font-bold text-gray-800 mb-6">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-800 mb-4 sm:mb-6">
             {t("strikers")}
           </h1>
-          <p className="text-xl text-gray-600 max-w-4xl mx-auto leading-relaxed">
+          <p className="text-lg sm:text-xl text-gray-600 max-w-4xl mx-auto leading-relaxed px-4">
             {t("strikerDescription")}
           </p>
-          <div className="flex justify-center mt-6">
-            <Badge className="bg-gradient-to-r from-red-600 to-orange-600 text-white px-6 py-2 text-lg">
-              <Users className="w-4 h-4 mr-2" />
+          <div className="flex justify-center mt-4 sm:mt-6">
+            <Badge className="bg-gradient-to-r from-red-600 to-orange-600 text-white px-4 py-2 sm:px-6 sm:py-2 text-sm sm:text-lg">
+              <Users className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
               {filteredPlayers.length} {t("players")}
             </Badge>
           </div>
         </div>
 
         {/* Search and Filters */}
-        <div className="bg-white rounded-2xl shadow-lg p-6 mb-8 border border-gray-100">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+        <div className="bg-white rounded-xl sm:rounded-2xl shadow-lg p-4 sm:p-6 mb-6 sm:mb-8 border border-gray-100">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 sm:gap-4">
+            <div className="relative sm:col-span-2 lg:col-span-1">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 sm:w-5 sm:h-5 text-gray-400" />
               <Input
                 placeholder={t("searchPlayers")}
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10 h-12 border-gray-200 focus:border-red-500"
+                className="pl-10 sm:pl-12 h-10 sm:h-12 border-gray-200 focus:border-red-500 text-sm sm:text-base"
               />
             </div>
 
             <select
               value={selectedClub}
               onChange={(e) => setSelectedClub(e.target.value)}
-              className="h-12 px-4 border border-gray-200 rounded-lg focus:border-red-500 focus:ring-2 focus:ring-red-200"
+              className="h-10 sm:h-12 px-3 sm:px-4 border border-gray-200 rounded-lg focus:border-red-500 focus:ring-2 focus:ring-red-200 text-sm sm:text-base"
             >
               <option value="">{t("allClubs")}</option>
               {clubs.map((club) => (
@@ -512,7 +512,7 @@ export default function StrikerPage() {
             <select
               value={selectedNationality}
               onChange={(e) => setSelectedNationality(e.target.value)}
-              className="h-12 px-4 border border-gray-200 rounded-lg focus:border-red-500 focus:ring-2 focus:ring-red-200"
+              className="h-10 sm:h-12 px-3 sm:px-4 border border-gray-200 rounded-lg focus:border-red-500 focus:ring-2 focus:ring-red-200 text-sm sm:text-base"
             >
               <option value="">{t("allNationalities")}</option>
               {nationalities.map((nationality) => (
@@ -525,7 +525,7 @@ export default function StrikerPage() {
             <select
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value)}
-              className="h-12 px-4 border border-gray-200 rounded-lg focus:border-red-500 focus:ring-2 focus:ring-red-200"
+              className="h-10 sm:h-12 px-3 sm:px-4 border border-gray-200 rounded-lg focus:border-red-500 focus:ring-2 focus:ring-red-200 text-sm sm:text-base"
             >
               <option value="rating">{t("sortByRating")}</option>
               <option value="age">{t("sortByAge")}</option>
@@ -558,7 +558,7 @@ export default function StrikerPage() {
         <Tabs value={viewMode} onValueChange={setViewMode}>
           {/* Grid View */}
           <TabsContent value="grid">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
               {filteredPlayers.map((player) => (
                 <Card
                   key={player.id}

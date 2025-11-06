@@ -88,12 +88,29 @@ export default function ChatInterface({
   
   // Initialize WebSocket connection
   useEffect(() => {
+    // Don't initialize WebSocket if user is not logged in
+    if (!user) {
+      return;
+    }
+
+    // Don't initialize WebSocket on setup profile page
+    if (window.location.pathname === "/setup-profile") {
+      return;
+    }
+
     console.log("Initializing WebSocket connection");
     
     const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
-    const wsUrl = `${protocol}//${window.location.host}/ws`;
+    const host = window.location.host || "localhost:3001";
+    const wsUrl = `${protocol}//${host}/ws`;
     
     console.log("WebSocket URL:", wsUrl);
+    
+    // Validate URL before creating WebSocket
+    if (!wsUrl || wsUrl.includes("undefined")) {
+      console.error("Invalid WebSocket URL:", wsUrl);
+      return;
+    }
     
     let newSocket: WebSocket | null = null;
     

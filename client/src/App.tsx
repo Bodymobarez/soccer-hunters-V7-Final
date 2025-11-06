@@ -27,6 +27,7 @@ import ClubDashboard from "@/pages/club-dashboard";
 import AgentDashboard from "@/pages/agent-dashboard";
 import DoctorDashboard from "@/pages/doctor-dashboard";
 import AdminDashboard from "@/pages/admin-dashboard";
+import SetupProfile from "@/pages/setup-profile";
 import DoctorsPage from "@/pages/doctors-page";
 import ClubsPage from "@/pages/clubs-page";
 import AgentsPage from "@/pages/agents-page";
@@ -240,6 +241,15 @@ function Router() {
       </Route>
 
 
+      {/* صفحة إعداد الملف الشخصي للاعبين والمدربين */}
+      <Route path="/setup-profile">
+        {() => (
+          <ProtectedRoute roles={["talent", "coach"]}>
+            <SetupProfile />
+          </ProtectedRoute>
+        )}
+      </Route>
+
       {/* مسارات محمية حسب الدور */}
       <Route path="/talent-dashboard">
         {() => (
@@ -333,12 +343,12 @@ function DocumentDirectionHandler() {
   useEffect(() => {
     const handleLanguageChanged = () => {
       // التحقق من التخزين المحلي لقيمة اللغة الجديدة
-      const appLocale = localStorage.getItem("app-locale");
-      if (appLocale) {
+      const siteLanguage = localStorage.getItem("siteLanguage");
+      if (siteLanguage) {
         // تحديث اتجاه المستند
-        const newDir = appLocale === "ar" ? "rtl" : "ltr";
+        const newDir = siteLanguage === "ar" ? "rtl" : "ltr";
         document.documentElement.dir = newDir;
-        document.documentElement.lang = appLocale;
+        document.documentElement.lang = siteLanguage;
         console.log(
           `✅ DocumentDirectionHandler: تم تحديث اتجاه المستند إلى ${newDir}`,
         );
@@ -380,12 +390,12 @@ function App() {
                 <SkipToContentLink />
 
                 <Toaster />
-                {/* عرض شريط التنقل فقط في حالة تسجيل الدخول */}
-                {location !== "/" && <Navbar />}
+                {/* عرض شريط التنقل فقط في حالة تسجيل الدخول وليس في صفحة الإعداد */}
+                {location !== "/" && location !== "/setup-profile" && <Navbar />}
                 <main id="main-content" className="min-h-screen" tabIndex={-1}>
                   <Router />
                 </main>
-                {location !== "/" && <ChatButton />}
+                {location !== "/" && location !== "/setup-profile" && <ChatButton />}
               </TooltipProvider>
             </ChatProvider>
           </TranslationProvider>
