@@ -207,8 +207,9 @@ export const queryClient = new QueryClient({
       queryFn: getQueryFn({ on401: "throw" }),
       refetchInterval: false,
       refetchOnWindowFocus: false,
-      staleTime: Infinity,
+      staleTime: 0, // Changed from Infinity to 0 to allow fresh data on mount
       retry: false,
+      cacheTime: 0, // Don't cache queries to ensure fresh data after logout
     },
     mutations: {
       retry: false,

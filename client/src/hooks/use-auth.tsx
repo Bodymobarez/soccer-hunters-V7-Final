@@ -75,8 +75,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }
     },
     staleTime: 0, // Always consider data stale to allow refetch
+    cacheTime: 0, // Don't cache user data to ensure fresh data after logout
     refetchOnWindowFocus: false, // Don't refetch on window focus to prevent auto-login
-    refetchOnMount: false, // Don't refetch on mount if data exists
+    refetchOnMount: true, // Always refetch on mount to get current user state
   });
 
   // Login mutation
