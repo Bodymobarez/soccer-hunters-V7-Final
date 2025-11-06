@@ -85,24 +85,33 @@ export function Navbar() {
 
   const handleLogout = async () => {
     try {
-      // Clear localStorage first
+      // Clear localStorage FIRST before anything else
+      localStorage.clear(); // Clear everything to be sure
+      
+      // Also explicitly remove auth-related keys
       localStorage.removeItem('mockUser');
       localStorage.removeItem('token');
       localStorage.removeItem('user');
       localStorage.removeItem('authToken');
       localStorage.removeItem('session');
       
-      // Call logout function
+      // Call logout function (which will also clear data)
       await logout();
       
       // Wait a moment to ensure all state is cleared
-      await new Promise(resolve => setTimeout(resolve, 100));
+      await new Promise(resolve => setTimeout(resolve, 200));
+      
+      // Double check localStorage is empty
+      if (localStorage.getItem('mockUser')) {
+        localStorage.removeItem('mockUser');
+      }
       
       // Force page reload to ensure clean state
-      window.location.href = "/";
+      window.location.replace("/"); // Use replace instead of href to prevent back button issues
     } catch (error) {
       console.error("Error during logout:", error);
-      // Even if logout fails, clear data and redirect
+      // Even if logout fails, clear ALL data
+      localStorage.clear();
       localStorage.removeItem('mockUser');
       localStorage.removeItem('token');
       localStorage.removeItem('user');
@@ -110,7 +119,7 @@ export function Navbar() {
       localStorage.removeItem('session');
       
       // Force page reload
-      window.location.href = "/";
+      window.location.replace("/");
     }
   };
 

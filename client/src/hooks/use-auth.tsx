@@ -51,8 +51,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   } = useQuery<User | null, Error>({
     queryKey: ["/api/user"],
     queryFn: async () => {
-      // Use mock authentication if no backend is configured
+      // Check localStorage first - if no mockUser, return null immediately
       if (config.useMockApi) {
+        const stored = localStorage.getItem('mockUser');
+        if (!stored) {
+          return null;
+        }
         return await mockAuth.getCurrentUser();
       }
 
@@ -62,10 +66,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         return await res.json();
       } catch (err) {
         // Fallback to mock if backend is not available
+        const stored = localStorage.getItem('mockUser');
+        if (!stored) {
+          return null;
+        }
         console.warn("Backend not available, checking mock authentication");
         return await mockAuth.getCurrentUser();
       }
     },
+    staleTime: 0, // Always consider data stale to allow refetch
+    refetchOnWindowFocus: false, // Don't refetch on window focus to prevent auto-login
+    refetchOnMount: false, // Don't refetch on mount if data exists
   });
 
   // Login mutation
@@ -211,7 +222,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         throw error;
       }
     },
-    onSuccess: async () => {
+    onSuccess: () => {
       // Clear localStorage completely first
       localStorage.removeItem('mockUser');
       localStorage.removeItem('token');
@@ -219,19 +230,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       localStorage.removeItem('authToken');
       localStorage.removeItem('session');
       
-      // Set user data to null immediately
+      // Set user data to null immediately - DO NOT refetch
       queryClient.setQueryData(["/api/user"], null);
       
-      // Invalidate and remove user query to force refetch
-      queryClient.invalidateQueries({ queryKey: ["/api/user"] });
-      queryClient.removeQueries({ queryKey: ["/api/user"] });
+      // Cancel any ongoing queries to prevent refetch
+      queryClient.cancelQueries({ queryKey: ["/api/user"] });
       
-      // Force refetch to ensure UI updates
-      await queryClient.refetchQueries({ queryKey: ["/api/user"] });
+      // Remove query from cache to prevent automatic refetch
+      queryClient.removeQueries({ queryKey: ["/api/user"] });
       
       console.log("تم تسجيل الخروج بنجاح");
     },
-    onError: async (error: Error) => {
+    onError: (error: Error) => {
       // Even on error, clear local data
       localStorage.removeItem('mockUser');
       localStorage.removeItem('token');
@@ -239,12 +249,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       localStorage.removeItem('authToken');
       localStorage.removeItem('session');
       
+      // Set user data to null - DO NOT refetch
       queryClient.setQueryData(["/api/user"], null);
-      queryClient.invalidateQueries({ queryKey: ["/api/user"] });
-      queryClient.removeQueries({ queryKey: ["/api/user"] });
       
-      // Force refetch to ensure UI updates
-      await queryClient.refetchQueries({ queryKey: ["/api/user"] });
+      // Cancel any ongoing queries to prevent refetch
+      queryClient.cancelQueries({ queryKey: ["/api/user"] });
+      
+      // Remove query from cache to prevent automatic refetch
+      queryClient.removeQueries({ queryKey: ["/api/user"] });
       
       console.error("خطأ في تسجيل الخروج:", error.message);
     },
@@ -261,9 +273,23 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const logout = async () => {
     try {
+      // Clear localStorage first to prevent getCurrentUser from returning user
+      localStorage.removeItem('mockUser');
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+      localStorage.removeItem('authToken');
+      localStorage.removeItem('session');
+      
+      // Cancel any ongoing queries
+      queryClient.cancelQueries({ queryKey: ["/api/user"] });
+      
+      // Set user data to null immediately
+      queryClient.setQueryData(["/api/user"], null);
+      
+      // Call logout mutation
       await logoutMutation.mutateAsync();
-      // Force refetch to update UI
-      await queryClient.refetchQueries({ queryKey: ["/api/user"] });
+      
+      // DO NOT refetch - just ensure data is null
     } catch (error) {
       // Even if logout fails, ensure local data is cleared
       localStorage.removeItem('mockUser');
@@ -272,8 +298,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       localStorage.removeItem('authToken');
       localStorage.removeItem('session');
       
+      // Set user data to null - DO NOT refetch
       queryClient.setQueryData(["/api/user"], null);
-      queryClient.invalidateQueries({ queryKey: ["/api/user"] });
+      queryClient.cancelQueries({ queryKey: ["/api/user"] });
       queryClient.removeQueries({ queryKey: ["/api/user"] });
     }
   };
