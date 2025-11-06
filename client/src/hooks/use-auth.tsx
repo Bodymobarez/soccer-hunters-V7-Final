@@ -211,30 +211,41 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         throw error;
       }
     },
-    onSuccess: () => {
-      // Clear user data from query cache
-      queryClient.setQueryData(["/api/user"], null);
-      
-      // Clear all query cache to ensure clean state
-      queryClient.clear();
-      
-      // Clear localStorage completely
+    onSuccess: async () => {
+      // Clear localStorage completely first
       localStorage.removeItem('mockUser');
       localStorage.removeItem('token');
       localStorage.removeItem('user');
+      localStorage.removeItem('authToken');
+      localStorage.removeItem('session');
       
-      // Close any open WebSocket connections
-      // This will be handled by the components that use WebSocket
+      // Set user data to null immediately
+      queryClient.setQueryData(["/api/user"], null);
+      
+      // Invalidate and remove user query to force refetch
+      queryClient.invalidateQueries({ queryKey: ["/api/user"] });
+      queryClient.removeQueries({ queryKey: ["/api/user"] });
+      
+      // Force refetch to ensure UI updates
+      await queryClient.refetchQueries({ queryKey: ["/api/user"] });
       
       console.log("تم تسجيل الخروج بنجاح");
     },
-    onError: (error: Error) => {
+    onError: async (error: Error) => {
       // Even on error, clear local data
-      queryClient.setQueryData(["/api/user"], null);
-      queryClient.clear();
       localStorage.removeItem('mockUser');
       localStorage.removeItem('token');
       localStorage.removeItem('user');
+      localStorage.removeItem('authToken');
+      localStorage.removeItem('session');
+      
+      queryClient.setQueryData(["/api/user"], null);
+      queryClient.invalidateQueries({ queryKey: ["/api/user"] });
+      queryClient.removeQueries({ queryKey: ["/api/user"] });
+      
+      // Force refetch to ensure UI updates
+      await queryClient.refetchQueries({ queryKey: ["/api/user"] });
+      
       console.error("خطأ في تسجيل الخروج:", error.message);
     },
   });
@@ -251,13 +262,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const logout = async () => {
     try {
       await logoutMutation.mutateAsync();
+      // Force refetch to update UI
+      await queryClient.refetchQueries({ queryKey: ["/api/user"] });
     } catch (error) {
       // Even if logout fails, ensure local data is cleared
-      queryClient.setQueryData(["/api/user"], null);
-      queryClient.clear();
       localStorage.removeItem('mockUser');
       localStorage.removeItem('token');
       localStorage.removeItem('user');
+      localStorage.removeItem('authToken');
+      localStorage.removeItem('session');
+      
+      queryClient.setQueryData(["/api/user"], null);
+      queryClient.invalidateQueries({ queryKey: ["/api/user"] });
+      queryClient.removeQueries({ queryKey: ["/api/user"] });
     }
   };
 

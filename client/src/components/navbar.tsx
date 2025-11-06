@@ -85,17 +85,31 @@ export function Navbar() {
 
   const handleLogout = async () => {
     try {
+      // Clear localStorage first
+      localStorage.removeItem('mockUser');
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+      localStorage.removeItem('authToken');
+      localStorage.removeItem('session');
+      
+      // Call logout function
       await logout();
-      // Wait a bit to ensure state is cleared
-      setTimeout(() => {
-        setLocation("/");
-        // Force page reload to ensure clean state
-        window.location.href = "/";
-      }, 100);
+      
+      // Wait a moment to ensure all state is cleared
+      await new Promise(resolve => setTimeout(resolve, 100));
+      
+      // Force page reload to ensure clean state
+      window.location.href = "/";
     } catch (error) {
       console.error("Error during logout:", error);
-      // Even if logout fails, redirect to home
-      setLocation("/");
+      // Even if logout fails, clear data and redirect
+      localStorage.removeItem('mockUser');
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+      localStorage.removeItem('authToken');
+      localStorage.removeItem('session');
+      
+      // Force page reload
       window.location.href = "/";
     }
   };
