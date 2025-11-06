@@ -39,7 +39,12 @@ class MockAuth {
     if (user) {
       const { password: _, ...userWithoutPassword } = user;
       this.currentUser = userWithoutPassword;
+      
+      // Clear logout flag on successful login
+      sessionStorage.removeItem('justLoggedOut');
+      
       localStorage.setItem('mockUser', JSON.stringify(userWithoutPassword));
+      console.log("✅ MockAuth: Login successful, logout flag cleared");
       return userWithoutPassword;
     }
     throw new Error("اسم المستخدم أو كلمة المرور غير صحيحة");
@@ -57,19 +62,23 @@ class MockAuth {
   async logout() {
     this.currentUser = null;
     
-    // Clear all authentication-related data from both localStorage and sessionStorage
+    // Set logout flag FIRST
+    sessionStorage.setItem('justLoggedOut', 'true');
+    
+    // Clear all authentication-related data from localStorage
     const authKeys = ['mockUser', 'token', 'user', 'authToken', 'session', 'userData'];
     
     authKeys.forEach(key => {
       localStorage.removeItem(key);
-      sessionStorage.removeItem(key);
     });
     
-    // Clear entire storage for good measure
+    // Clear entire localStorage for good measure
     localStorage.clear();
-    sessionStorage.clear();
     
-    console.log("🧹 MockAuth: All storage cleared");
+    // Restore logout flag (in case clear() removed it from sessionStorage)
+    sessionStorage.setItem('justLoggedOut', 'true');
+    
+    console.log("🧹 MockAuth: All storage cleared, logout flag set");
   }
 
   async register(userData: any) {
@@ -90,7 +99,12 @@ class MockAuth {
 
     const { password: _, ...userWithoutPassword } = newUser;
     this.currentUser = userWithoutPassword;
+    
+    // Clear logout flag on successful registration
+    sessionStorage.removeItem('justLoggedOut');
+    
     localStorage.setItem('mockUser', JSON.stringify(userWithoutPassword));
+    console.log("✅ MockAuth: Registration successful, logout flag cleared");
     return userWithoutPassword;
   }
 }

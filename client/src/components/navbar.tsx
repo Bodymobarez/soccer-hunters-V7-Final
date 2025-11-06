@@ -87,44 +87,48 @@ export function Navbar() {
     try {
       console.log("🔴 Starting logout process...");
       
-      // Step 1: Clear ALL storage immediately
-      localStorage.clear();
-      sessionStorage.clear();
+      // Step 1: Set logout flag FIRST - prevents auto-login
+      sessionStorage.setItem('justLoggedOut', 'true');
       
-      // Step 2: Explicitly remove auth keys (redundant but ensures cleanup)
+      // Step 2: Clear ALL storage immediately
+      localStorage.clear();
+      
+      // Step 3: Explicitly remove auth keys (redundant but ensures cleanup)
       const authKeys = ['mockUser', 'token', 'user', 'authToken', 'session', 'userData'];
       authKeys.forEach(key => {
         localStorage.removeItem(key);
-        sessionStorage.removeItem(key);
       });
       
-      console.log("✅ Storage cleared");
+      // Restore logout flag (in case localStorage.clear() removed it)
+      sessionStorage.setItem('justLoggedOut', 'true');
       
-      // Step 3: Call logout function to clear React Query cache
+      console.log("✅ Storage cleared, logout flag set");
+      
+      // Step 4: Call logout function to clear React Query cache
       await logout();
       
       console.log("✅ Logout function completed");
       
-      // Step 4: Wait briefly to ensure all async operations complete
+      // Step 5: Wait briefly to ensure all async operations complete
       await new Promise(resolve => setTimeout(resolve, 100));
       
-      // Step 5: Final verification - ensure storage is empty
+      // Step 6: Final verification - ensure storage is empty and flag is set
       authKeys.forEach(key => {
         if (localStorage.getItem(key)) localStorage.removeItem(key);
-        if (sessionStorage.getItem(key)) sessionStorage.removeItem(key);
       });
+      sessionStorage.setItem('justLoggedOut', 'true');
       
       console.log("✅ Final verification complete");
       
-      // Step 6: Force navigation to login page with page reload
+      // Step 7: Force navigation to login page with page reload
       window.location.replace("/");
       
     } catch (error) {
       console.error("❌ Error during logout:", error);
       
       // Emergency cleanup - clear everything regardless of error
+      sessionStorage.setItem('justLoggedOut', 'true');
       localStorage.clear();
-      sessionStorage.clear();
       
       // Force page reload to reset application state
       window.location.replace("/");

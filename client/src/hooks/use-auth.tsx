@@ -53,6 +53,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     queryFn: async () => {
       console.log("🔍 Checking authentication state...");
       
+      // Check if user just logged out (flag set by logout function)
+      const justLoggedOut = sessionStorage.getItem('justLoggedOut');
+      if (justLoggedOut === 'true') {
+        console.log("🔴 Just logged out - preventing auto-login");
+        return null;
+      }
+      
       // CRITICAL: Check localStorage FIRST - if no mockUser, return null immediately
       // This prevents auto-login after logout
       const storedMockUser = localStorage.getItem('mockUser');
@@ -100,12 +107,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     },
     staleTime: 0, // Always consider data stale
     gcTime: 0, // React Query v5: immediately garbage collect to prevent caching
-    refetchOnWindowFocus: false, // Don't refetch on window focus to prevent auto-login
-    refetchOnMount: false, // ⚠️ CRITICAL: Don't auto-refetch on mount to prevent auto-login
+    refetchOnWindowFocus: false, // Don't refetch on window focus
+    refetchOnMount: true, // ✅ Allow refetch on mount to check localStorage
     refetchOnReconnect: false, // Don't refetch on reconnect
-    enabled: true, // Always enabled to check authentication state
+    enabled: true, // Always enabled
     retry: false, // Don't retry failed auth checks
-    retryOnMount: false, // Don't retry on mount
   });
 
   // Effect to ensure user is null if no storage data exists
@@ -169,8 +175,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }
     },
     onSuccess: (userData: User) => {
+      // Clear logout flag on successful login
+      sessionStorage.removeItem('justLoggedOut');
+      
       queryClient.setQueryData(["/api/user"], userData);
-      console.log("تم تسجيل الدخول بنجاح");
+      console.log("✅ تم تسجيل الدخول بنجاح");
     },
     onError: (error: Error) => {
       console.error("خطأ في تسجيل الدخول:", error.message);
@@ -306,6 +315,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   // Public methods
   const login = async (credentials: LoginCredentials) => {
+    // Clear logout flag before login attempt
+    sessionStorage.removeItem('justLoggedOut');
     await loginMutation.mutateAsync(credentials);
   };
 
@@ -316,6 +327,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const logout = async () => {
     try {
       console.log("🔴 useAuth: Starting logout...");
+      
+      // Set logout flag FIRST - this prevents queryFn from returning user
+      sessionStorage.setItem('justLoggedOut', 'true');
       
       // Clear all storage first to prevent getCurrentUser from returning user
       const authKeys = ['mockUser', 'token', 'user', 'authToken', 'session', 'userData'];
@@ -340,6 +354,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       // DO NOT refetch - just ensure data is null
     } catch (error) {
       console.error("❌ useAuth: Logout error:", error);
+      
+      // Set logout flag even on error
+      sessionStorage.setItem('justLoggedOut', 'true');
       
       // Even if logout fails, ensure all storage is cleared
       const authKeys = ['mockUser', 'token', 'user', 'authToken', 'session', 'userData'];
