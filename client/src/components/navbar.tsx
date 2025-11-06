@@ -84,8 +84,20 @@ export function Navbar() {
   };
 
   const handleLogout = async () => {
-    await logout();
-    setLocation("/");
+    try {
+      await logout();
+      // Wait a bit to ensure state is cleared
+      setTimeout(() => {
+        setLocation("/");
+        // Force page reload to ensure clean state
+        window.location.href = "/";
+      }, 100);
+    } catch (error) {
+      console.error("Error during logout:", error);
+      // Even if logout fails, redirect to home
+      setLocation("/");
+      window.location.href = "/";
+    }
   };
 
   return (

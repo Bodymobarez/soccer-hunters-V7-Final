@@ -56,7 +56,13 @@ class MockAuth {
 
   async logout() {
     this.currentUser = null;
+    // Clear all authentication-related data from localStorage
     localStorage.removeItem('mockUser');
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    // Clear any other session data
+    localStorage.removeItem('authToken');
+    localStorage.removeItem('session');
   }
 
   async register(userData: any) {

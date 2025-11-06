@@ -86,17 +86,32 @@ const playerSchema = z.object({
 // Coach form schema
 const coachSchema = z.object({
   name: z.string().min(2, "الاسم يجب أن يكون على الأقل حرفين"),
+  email: z.string().email("البريد الإلكتروني غير صحيح").optional(),
+  phone: z.string().optional(),
+  location: z.string().optional(),
+  dateOfBirth: z.string().optional(),
   description: z.string().optional(),
   specialization: z.string().min(1, "التخصص مطلوب"),
   experience: z.number().min(0).optional(),
   age: z.number().min(25).max(80).optional(),
   nationality: z.string().optional(),
   education: z.string().optional(),
-  licenses: z.string().optional(),
-  achievements: z.string().optional(),
-  previousTeams: z.string().optional(),
+  languages: z.array(z.string()).optional(),
+  licenses: z.array(z.string()).optional(),
+  certifications: z.array(z.string()).optional(),
+  achievements: z.array(z.string()).optional(),
+  previousTeams: z.array(z.string()).optional(),
   coachingStyle: z.string().optional(),
   tacticalApproach: z.string().optional(),
+  philosophy: z.string().optional(),
+  preferredFormation: z.string().optional(),
+  currentClub: z.string().optional(),
+  contractType: z.string().optional(),
+  availability: z.string().optional(),
+  matchesManaged: z.number().optional(),
+  winPercentage: z.number().optional(),
+  trophiesWon: z.number().optional(),
+  playersCoached: z.number().optional(),
 });
 
 export default function SetupProfile() {
@@ -111,6 +126,18 @@ export default function SetupProfile() {
   const [analysisResult, setAnalysisResult] = useState<any>(null);
   const [skills, setSkills] = useState<string[]>([]);
   const [newSkill, setNewSkill] = useState("");
+  
+  // Coach-specific state
+  const [languages, setLanguages] = useState<string[]>([]);
+  const [newLanguage, setNewLanguage] = useState("");
+  const [licenses, setLicenses] = useState<string[]>([]);
+  const [newLicense, setNewLicense] = useState("");
+  const [certifications, setCertifications] = useState<string[]>([]);
+  const [newCertification, setNewCertification] = useState("");
+  const [achievements, setAchievements] = useState<string[]>([]);
+  const [newAchievement, setNewAchievement] = useState("");
+  const [previousTeams, setPreviousTeams] = useState<string[]>([]);
+  const [newPreviousTeam, setNewPreviousTeam] = useState("");
 
   // Redirect if not logged in or not talent/coach
   useEffect(() => {
@@ -148,17 +175,32 @@ export default function SetupProfile() {
     resolver: zodResolver(coachSchema),
     defaultValues: {
       name: user?.fullName || user?.username || "",
+      email: user?.email || "",
+      phone: user?.phone || "",
+      location: "",
+      dateOfBirth: "",
       description: "",
       specialization: "",
       experience: undefined,
       age: undefined,
       nationality: "",
       education: "",
-      licenses: "",
-      achievements: "",
-      previousTeams: "",
+      languages: [],
+      licenses: [],
+      certifications: [],
+      achievements: [],
+      previousTeams: [],
       coachingStyle: "",
       tacticalApproach: "",
+      philosophy: "",
+      preferredFormation: "",
+      currentClub: "",
+      contractType: "",
+      availability: "",
+      matchesManaged: undefined,
+      winPercentage: undefined,
+      trophiesWon: undefined,
+      playersCoached: undefined,
     },
   });
 
@@ -246,11 +288,23 @@ export default function SetupProfile() {
   const onSubmit = async (values: any) => {
     try {
       const endpoint = isPlayer ? "/api/talent" : "/api/coach";
-      const response = await apiRequest("POST", endpoint, {
-        ...values,
-        userId: user?.id,
-        skills: skills,
-      });
+      const submitData = isPlayer 
+        ? {
+            ...values,
+            userId: user?.id,
+            skills: skills,
+          }
+        : {
+            ...values,
+            userId: user?.id,
+            languages: languages,
+            licenses: licenses,
+            certifications: certifications,
+            achievements: achievements,
+            previousTeams: previousTeams,
+          };
+      
+      const response = await apiRequest("POST", endpoint, submitData);
 
       if (!response.ok) {
         throw new Error("فشل حفظ البيانات");
@@ -286,6 +340,62 @@ export default function SetupProfile() {
 
   const removeSkill = (skill: string) => {
     setSkills(skills.filter((s) => s !== skill));
+  };
+
+  // Coach-specific functions
+  const addLanguage = () => {
+    if (newLanguage.trim() && !languages.includes(newLanguage.trim())) {
+      setLanguages([...languages, newLanguage.trim()]);
+      setNewLanguage("");
+    }
+  };
+
+  const removeLanguage = (lang: string) => {
+    setLanguages(languages.filter((l) => l !== lang));
+  };
+
+  const addLicense = () => {
+    if (newLicense.trim() && !licenses.includes(newLicense.trim())) {
+      setLicenses([...licenses, newLicense.trim()]);
+      setNewLicense("");
+    }
+  };
+
+  const removeLicense = (license: string) => {
+    setLicenses(licenses.filter((l) => l !== license));
+  };
+
+  const addCertification = () => {
+    if (newCertification.trim() && !certifications.includes(newCertification.trim())) {
+      setCertifications([...certifications, newCertification.trim()]);
+      setNewCertification("");
+    }
+  };
+
+  const removeCertification = (cert: string) => {
+    setCertifications(certifications.filter((c) => c !== cert));
+  };
+
+  const addAchievement = () => {
+    if (newAchievement.trim() && !achievements.includes(newAchievement.trim())) {
+      setAchievements([...achievements, newAchievement.trim()]);
+      setNewAchievement("");
+    }
+  };
+
+  const removeAchievement = (achievement: string) => {
+    setAchievements(achievements.filter((a) => a !== achievement));
+  };
+
+  const addPreviousTeam = () => {
+    if (newPreviousTeam.trim() && !previousTeams.includes(newPreviousTeam.trim())) {
+      setPreviousTeams([...previousTeams, newPreviousTeam.trim()]);
+      setNewPreviousTeam("");
+    }
+  };
+
+  const removePreviousTeam = (team: string) => {
+    setPreviousTeams(previousTeams.filter((t) => t !== team));
   };
 
   const progress = ((activeStep - 1) / 2) * 100;
@@ -823,82 +933,119 @@ export default function SetupProfile() {
                       </>
                     ) : (
                       <>
-                        <FormField
-                          control={form.control}
-                          name="name"
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel>{t("fullName")}</FormLabel>
-                              <FormControl>
-                                <Input {...field} className="h-12" />
-                              </FormControl>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
-
-                        <FormField
-                          control={form.control}
-                          name="description"
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel>نبذة تعريفية</FormLabel>
-                              <FormControl>
-                                <Textarea {...field} rows={4} />
-                              </FormControl>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
-
-                        <FormField
-                          control={form.control}
-                          name="specialization"
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel>{t("specialization")}</FormLabel>
-                              <Select
-                                onValueChange={field.onChange}
-                                value={field.value || undefined}
-                              >
-                                <FormControl>
-                                  <SelectTrigger className="h-12">
-                                    <SelectValue placeholder="اختر التخصص" />
-                                  </SelectTrigger>
-                                </FormControl>
-                                <SelectContent>
-                                  <SelectItem value="مدير فني">مدير فني</SelectItem>
-                                  <SelectItem value="مدرب رئيسي">مدرب رئيسي</SelectItem>
-                                  <SelectItem value="مدرب مساعد">مدرب مساعد</SelectItem>
-                                  <SelectItem value="مدرب حراس المرمى">
-                                    مدرب حراس المرمى
-                                  </SelectItem>
-                                  <SelectItem value="مدرب لياقة">مدرب لياقة</SelectItem>
-                                </SelectContent>
-                              </Select>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
-
-                        <div className="grid grid-cols-2 gap-4">
+                        {/* Personal Information Section */}
+                        <div className="space-y-4 border-b pb-6">
+                          <h3 className="text-lg font-semibold text-gray-800 flex items-center gap-2">
+                            <User className="w-5 h-5" />
+                            المعلومات الشخصية
+                          </h3>
+                          
                           <FormField
                             control={form.control}
-                            name="experience"
+                            name="name"
                             render={({ field }) => (
                               <FormItem>
-                                <FormLabel>{t("experience")}</FormLabel>
+                                <FormLabel className="text-base font-medium">{t("fullName")} *</FormLabel>
                                 <FormControl>
-                                  <Input
-                                    type="number"
-                                    {...field}
-                                    onChange={(e) =>
-                                      field.onChange(
-                                        e.target.value ? parseInt(e.target.value) : undefined
-                                      )
-                                    }
-                                    className="h-12"
-                                  />
+                                  <Input {...field} className="h-12" placeholder="الاسم الكامل" />
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <FormField
+                              control={form.control}
+                              name="email"
+                              render={({ field }) => (
+                                <FormItem>
+                                  <FormLabel className="text-base font-medium">البريد الإلكتروني</FormLabel>
+                                  <FormControl>
+                                    <Input {...field} type="email" className="h-12" placeholder="example@email.com" />
+                                  </FormControl>
+                                  <FormMessage />
+                                </FormItem>
+                              )}
+                            />
+
+                            <FormField
+                              control={form.control}
+                              name="phone"
+                              render={({ field }) => (
+                                <FormItem>
+                                  <FormLabel className="text-base font-medium">رقم الهاتف</FormLabel>
+                                  <FormControl>
+                                    <Input {...field} className="h-12" placeholder="+966500000000" />
+                                  </FormControl>
+                                  <FormMessage />
+                                </FormItem>
+                              )}
+                            />
+                          </div>
+
+                          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <FormField
+                              control={form.control}
+                              name="dateOfBirth"
+                              render={({ field }) => (
+                                <FormItem>
+                                  <FormLabel className="text-base font-medium">تاريخ الميلاد</FormLabel>
+                                  <FormControl>
+                                    <Input {...field} type="date" className="h-12" />
+                                  </FormControl>
+                                  <FormMessage />
+                                </FormItem>
+                              )}
+                            />
+
+                            <FormField
+                              control={form.control}
+                              name="age"
+                              render={({ field }) => (
+                                <FormItem>
+                                  <FormLabel className="text-base font-medium">{t("age")}</FormLabel>
+                                  <FormControl>
+                                    <Input
+                                      type="number"
+                                      {...field}
+                                      onChange={(e) =>
+                                        field.onChange(
+                                          e.target.value ? parseInt(e.target.value) : undefined
+                                        )
+                                      }
+                                      className="h-12"
+                                      placeholder="العمر"
+                                    />
+                                  </FormControl>
+                                  <FormMessage />
+                                </FormItem>
+                              )}
+                            />
+
+                            <FormField
+                              control={form.control}
+                              name="nationality"
+                              render={({ field }) => (
+                                <FormItem>
+                                  <FormLabel className="text-base font-medium">{t("nationality")}</FormLabel>
+                                  <FormControl>
+                                    <Input {...field} className="h-12" placeholder="الجنسية" />
+                                  </FormControl>
+                                  <FormMessage />
+                                </FormItem>
+                              )}
+                            />
+                          </div>
+
+                          <FormField
+                            control={form.control}
+                            name="location"
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormLabel className="text-base font-medium">الموقع الجغرافي</FormLabel>
+                                <FormControl>
+                                  <Input {...field} className="h-12" placeholder="المدينة، الدولة" />
                                 </FormControl>
                                 <FormMessage />
                               </FormItem>
@@ -907,21 +1054,12 @@ export default function SetupProfile() {
 
                           <FormField
                             control={form.control}
-                            name="age"
+                            name="description"
                             render={({ field }) => (
                               <FormItem>
-                                <FormLabel>{t("age")}</FormLabel>
+                                <FormLabel className="text-base font-medium">نبذة تعريفية</FormLabel>
                                 <FormControl>
-                                  <Input
-                                    type="number"
-                                    {...field}
-                                    onChange={(e) =>
-                                      field.onChange(
-                                        e.target.value ? parseInt(e.target.value) : undefined
-                                      )
-                                    }
-                                    className="h-12"
-                                  />
+                                  <Textarea {...field} rows={4} placeholder="اكتب نبذة تعريفية عن نفسك وخبراتك..." />
                                 </FormControl>
                                 <FormMessage />
                               </FormItem>
@@ -929,103 +1067,565 @@ export default function SetupProfile() {
                           />
                         </div>
 
-                        <FormField
-                          control={form.control}
-                          name="nationality"
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel>{t("nationality")}</FormLabel>
-                              <FormControl>
-                                <Input {...field} className="h-12" />
-                              </FormControl>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
+                        {/* Professional Information Section */}
+                        <div className="space-y-4 border-b pb-6 pt-6">
+                          <h3 className="text-lg font-semibold text-gray-800 flex items-center gap-2">
+                            <Target className="w-5 h-5" />
+                            المعلومات المهنية
+                          </h3>
 
-                        <FormField
-                          control={form.control}
-                          name="education"
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel>{t("education")}</FormLabel>
-                              <FormControl>
-                                <Textarea {...field} rows={3} />
-                              </FormControl>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
+                          <FormField
+                            control={form.control}
+                            name="specialization"
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormLabel className="text-base font-medium">{t("specialization")} *</FormLabel>
+                                <Select
+                                  onValueChange={field.onChange}
+                                  value={field.value || undefined}
+                                >
+                                  <FormControl>
+                                    <SelectTrigger className="h-12">
+                                      <SelectValue placeholder="اختر التخصص" />
+                                    </SelectTrigger>
+                                  </FormControl>
+                                  <SelectContent>
+                                    <SelectItem value="مدير فني">مدير فني</SelectItem>
+                                    <SelectItem value="مدرب رئيسي">مدرب رئيسي</SelectItem>
+                                    <SelectItem value="مدرب مساعد">مدرب مساعد</SelectItem>
+                                    <SelectItem value="مدرب حراس المرمى">مدرب حراس المرمى</SelectItem>
+                                    <SelectItem value="مدرب لياقة">مدرب لياقة</SelectItem>
+                                    <SelectItem value="مدرب تكتيكي">مدرب تكتيكي</SelectItem>
+                                    <SelectItem value="مدرب بدني">مدرب بدني</SelectItem>
+                                  </SelectContent>
+                                </Select>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
 
-                        <FormField
-                          control={form.control}
-                          name="licenses"
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel>{t("licenses")}</FormLabel>
-                              <FormControl>
-                                <Textarea {...field} rows={3} />
-                              </FormControl>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <FormField
+                              control={form.control}
+                              name="experience"
+                              render={({ field }) => (
+                                <FormItem>
+                                  <FormLabel className="text-base font-medium">{t("experience")} (سنوات)</FormLabel>
+                                  <FormControl>
+                                    <Input
+                                      type="number"
+                                      {...field}
+                                      onChange={(e) =>
+                                        field.onChange(
+                                          e.target.value ? parseInt(e.target.value) : undefined
+                                        )
+                                      }
+                                      className="h-12"
+                                      placeholder="عدد سنوات الخبرة"
+                                    />
+                                  </FormControl>
+                                  <FormMessage />
+                                </FormItem>
+                              )}
+                            />
 
-                        <FormField
-                          control={form.control}
-                          name="achievements"
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel>{t("achievements")}</FormLabel>
-                              <FormControl>
-                                <Textarea {...field} rows={3} />
-                              </FormControl>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
+                            <FormField
+                              control={form.control}
+                              name="currentClub"
+                              render={({ field }) => (
+                                <FormItem>
+                                  <FormLabel className="text-base font-medium">النادي الحالي</FormLabel>
+                                  <FormControl>
+                                    <Input {...field} className="h-12" placeholder="اسم النادي الحالي" />
+                                  </FormControl>
+                                  <FormMessage />
+                                </FormItem>
+                              )}
+                            />
+                          </div>
 
-                        <FormField
-                          control={form.control}
-                          name="previousTeams"
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel>{t("previousTeams")}</FormLabel>
-                              <FormControl>
-                                <Textarea {...field} rows={3} />
-                              </FormControl>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
+                          <FormField
+                            control={form.control}
+                            name="education"
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormLabel className="text-base font-medium">{t("education")}</FormLabel>
+                                <FormControl>
+                                  <Textarea {...field} rows={3} placeholder="المؤهلات التعليمية..." />
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+                        </div>
 
-                        <FormField
-                          control={form.control}
-                          name="coachingStyle"
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel>{t("coachingStyle")}</FormLabel>
-                              <FormControl>
-                                <Textarea {...field} rows={3} />
-                              </FormControl>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
+                        {/* Languages Section */}
+                        <div className="space-y-4 border-b pb-6 pt-6">
+                          <h3 className="text-lg font-semibold text-gray-800 flex items-center gap-2">
+                            <FileText className="w-5 h-5" />
+                            اللغات
+                          </h3>
+                          <div className="flex gap-2">
+                            <Input
+                              value={newLanguage}
+                              onChange={(e) => setNewLanguage(e.target.value)}
+                              onKeyPress={(e) => {
+                                if (e.key === "Enter") {
+                                  e.preventDefault();
+                                  addLanguage();
+                                }
+                              }}
+                              placeholder="أضف لغة (مثل: العربية، الإنجليزية)"
+                              className="h-12"
+                            />
+                            <Button
+                              type="button"
+                              onClick={addLanguage}
+                              className="h-12"
+                            >
+                              <Plus className="w-4 h-4" />
+                            </Button>
+                          </div>
+                          <div className="flex flex-wrap gap-2 mt-3">
+                            {languages.map((lang, index) => (
+                              <Badge
+                                key={index}
+                                variant="secondary"
+                                className="text-sm px-3 py-1"
+                              >
+                                {lang}
+                                <button
+                                  type="button"
+                                  onClick={() => removeLanguage(lang)}
+                                  className="ml-2 hover:text-red-600"
+                                >
+                                  <X className="w-3 h-3" />
+                                </button>
+                              </Badge>
+                            ))}
+                          </div>
+                        </div>
 
-                        <FormField
-                          control={form.control}
-                          name="tacticalApproach"
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel>{t("tacticalApproach")}</FormLabel>
-                              <FormControl>
-                                <Textarea {...field} rows={3} />
-                              </FormControl>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
+                        {/* Licenses Section */}
+                        <div className="space-y-4 border-b pb-6 pt-6">
+                          <h3 className="text-lg font-semibold text-gray-800 flex items-center gap-2">
+                            <Award className="w-5 h-5" />
+                            التراخيص والشهادات التدريبية
+                          </h3>
+                          <div className="flex gap-2">
+                            <Input
+                              value={newLicense}
+                              onChange={(e) => setNewLicense(e.target.value)}
+                              onKeyPress={(e) => {
+                                if (e.key === "Enter") {
+                                  e.preventDefault();
+                                  addLicense();
+                                }
+                              }}
+                              placeholder="أضف ترخيص (مثل: UEFA Pro License)"
+                              className="h-12"
+                            />
+                            <Button
+                              type="button"
+                              onClick={addLicense}
+                              className="h-12"
+                            >
+                              <Plus className="w-4 h-4" />
+                            </Button>
+                          </div>
+                          <div className="flex flex-wrap gap-2 mt-3">
+                            {licenses.map((license, index) => (
+                              <Badge
+                                key={index}
+                                variant="secondary"
+                                className="text-sm px-3 py-1"
+                              >
+                                {license}
+                                <button
+                                  type="button"
+                                  onClick={() => removeLicense(license)}
+                                  className="ml-2 hover:text-red-600"
+                                >
+                                  <X className="w-3 h-3" />
+                                </button>
+                              </Badge>
+                            ))}
+                          </div>
+                        </div>
+
+                        {/* Certifications Section */}
+                        <div className="space-y-4 border-b pb-6 pt-6">
+                          <h3 className="text-lg font-semibold text-gray-800 flex items-center gap-2">
+                            <Trophy className="w-5 h-5" />
+                            الشهادات الإضافية
+                          </h3>
+                          <div className="flex gap-2">
+                            <Input
+                              value={newCertification}
+                              onChange={(e) => setNewCertification(e.target.value)}
+                              onKeyPress={(e) => {
+                                if (e.key === "Enter") {
+                                  e.preventDefault();
+                                  addCertification();
+                                }
+                              }}
+                              placeholder="أضف شهادة (مثل: شهادة في علم النفس الرياضي)"
+                              className="h-12"
+                            />
+                            <Button
+                              type="button"
+                              onClick={addCertification}
+                              className="h-12"
+                            >
+                              <Plus className="w-4 h-4" />
+                            </Button>
+                          </div>
+                          <div className="flex flex-wrap gap-2 mt-3">
+                            {certifications.map((cert, index) => (
+                              <Badge
+                                key={index}
+                                variant="secondary"
+                                className="text-sm px-3 py-1"
+                              >
+                                {cert}
+                                <button
+                                  type="button"
+                                  onClick={() => removeCertification(cert)}
+                                  className="ml-2 hover:text-red-600"
+                                >
+                                  <X className="w-3 h-3" />
+                                </button>
+                              </Badge>
+                            ))}
+                          </div>
+                        </div>
+
+                        {/* Previous Teams Section */}
+                        <div className="space-y-4 border-b pb-6 pt-6">
+                          <h3 className="text-lg font-semibold text-gray-800 flex items-center gap-2">
+                            <Target className="w-5 h-5" />
+                            الفرق السابقة
+                          </h3>
+                          <div className="flex gap-2">
+                            <Input
+                              value={newPreviousTeam}
+                              onChange={(e) => setNewPreviousTeam(e.target.value)}
+                              onKeyPress={(e) => {
+                                if (e.key === "Enter") {
+                                  e.preventDefault();
+                                  addPreviousTeam();
+                                }
+                              }}
+                              placeholder="أضف فريق سابق (مثل: النادي الأهلي - 2020-2022)"
+                              className="h-12"
+                            />
+                            <Button
+                              type="button"
+                              onClick={addPreviousTeam}
+                              className="h-12"
+                            >
+                              <Plus className="w-4 h-4" />
+                            </Button>
+                          </div>
+                          <div className="flex flex-wrap gap-2 mt-3">
+                            {previousTeams.map((team, index) => (
+                              <Badge
+                                key={index}
+                                variant="secondary"
+                                className="text-sm px-3 py-1"
+                              >
+                                {team}
+                                <button
+                                  type="button"
+                                  onClick={() => removePreviousTeam(team)}
+                                  className="ml-2 hover:text-red-600"
+                                >
+                                  <X className="w-3 h-3" />
+                                </button>
+                              </Badge>
+                            ))}
+                          </div>
+                        </div>
+
+                        {/* Achievements Section */}
+                        <div className="space-y-4 border-b pb-6 pt-6">
+                          <h3 className="text-lg font-semibold text-gray-800 flex items-center gap-2">
+                            <Trophy className="w-5 h-5" />
+                            الإنجازات
+                          </h3>
+                          <div className="flex gap-2">
+                            <Input
+                              value={newAchievement}
+                              onChange={(e) => setNewAchievement(e.target.value)}
+                              onKeyPress={(e) => {
+                                if (e.key === "Enter") {
+                                  e.preventDefault();
+                                  addAchievement();
+                                }
+                              }}
+                              placeholder="أضف إنجاز (مثل: بطولة الدوري - 2021)"
+                              className="h-12"
+                            />
+                            <Button
+                              type="button"
+                              onClick={addAchievement}
+                              className="h-12"
+                            >
+                              <Plus className="w-4 h-4" />
+                            </Button>
+                          </div>
+                          <div className="flex flex-wrap gap-2 mt-3">
+                            {achievements.map((achievement, index) => (
+                              <Badge
+                                key={index}
+                                variant="secondary"
+                                className="text-sm px-3 py-1"
+                              >
+                                {achievement}
+                                <button
+                                  type="button"
+                                  onClick={() => removeAchievement(achievement)}
+                                  className="ml-2 hover:text-red-600"
+                                >
+                                  <X className="w-3 h-3" />
+                                </button>
+                              </Badge>
+                            ))}
+                          </div>
+                        </div>
+
+                        {/* Coaching Philosophy Section */}
+                        <div className="space-y-4 border-b pb-6 pt-6">
+                          <h3 className="text-lg font-semibold text-gray-800 flex items-center gap-2">
+                            <Star className="w-5 h-5" />
+                            الفلسفة والأسلوب التدريبي
+                          </h3>
+
+                          <FormField
+                            control={form.control}
+                            name="philosophy"
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormLabel className="text-base font-medium">الفلسفة التدريبية</FormLabel>
+                                <FormControl>
+                                  <Textarea {...field} rows={4} placeholder="اكتب فلسفتك التدريبية وأسلوبك في التعامل مع اللاعبين..." />
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+
+                          <FormField
+                            control={form.control}
+                            name="coachingStyle"
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormLabel className="text-base font-medium">{t("coachingStyle")}</FormLabel>
+                                <FormControl>
+                                  <Textarea {...field} rows={3} placeholder="وصف أسلوبك التدريبي..." />
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+
+                          <FormField
+                            control={form.control}
+                            name="tacticalApproach"
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormLabel className="text-base font-medium">{t("tacticalApproach")}</FormLabel>
+                                <FormControl>
+                                  <Textarea {...field} rows={3} placeholder="وصف نهجك التكتيكي..." />
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+
+                          <FormField
+                            control={form.control}
+                            name="preferredFormation"
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormLabel className="text-base font-medium">التشكيلة المفضلة</FormLabel>
+                                <FormControl>
+                                  <Input {...field} className="h-12" placeholder="مثل: 4-3-3، 4-4-2" />
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+                        </div>
+
+                        {/* Statistics Section */}
+                        <div className="space-y-4 border-b pb-6 pt-6">
+                          <h3 className="text-lg font-semibold text-gray-800 flex items-center gap-2">
+                            <BarChart3 className="w-5 h-5" />
+                            الإحصائيات المهنية
+                          </h3>
+
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <FormField
+                              control={form.control}
+                              name="matchesManaged"
+                              render={({ field }) => (
+                                <FormItem>
+                                  <FormLabel className="text-base font-medium">عدد المباريات المدربة</FormLabel>
+                                  <FormControl>
+                                    <Input
+                                      type="number"
+                                      {...field}
+                                      onChange={(e) =>
+                                        field.onChange(
+                                          e.target.value ? parseInt(e.target.value) : undefined
+                                        )
+                                      }
+                                      className="h-12"
+                                      placeholder="عدد المباريات"
+                                    />
+                                  </FormControl>
+                                  <FormMessage />
+                                </FormItem>
+                              )}
+                            />
+
+                            <FormField
+                              control={form.control}
+                              name="winPercentage"
+                              render={({ field }) => (
+                                <FormItem>
+                                  <FormLabel className="text-base font-medium">نسبة الفوز (%)</FormLabel>
+                                  <FormControl>
+                                    <Input
+                                      type="number"
+                                      {...field}
+                                      onChange={(e) =>
+                                        field.onChange(
+                                          e.target.value ? parseFloat(e.target.value) : undefined
+                                        )
+                                      }
+                                      className="h-12"
+                                      placeholder="نسبة الفوز"
+                                    />
+                                  </FormControl>
+                                  <FormMessage />
+                                </FormItem>
+                              )}
+                            />
+
+                            <FormField
+                              control={form.control}
+                              name="trophiesWon"
+                              render={({ field }) => (
+                                <FormItem>
+                                  <FormLabel className="text-base font-medium">عدد الألقاب</FormLabel>
+                                  <FormControl>
+                                    <Input
+                                      type="number"
+                                      {...field}
+                                      onChange={(e) =>
+                                        field.onChange(
+                                          e.target.value ? parseInt(e.target.value) : undefined
+                                        )
+                                      }
+                                      className="h-12"
+                                      placeholder="عدد الألقاب"
+                                    />
+                                  </FormControl>
+                                  <FormMessage />
+                                </FormItem>
+                              )}
+                            />
+
+                            <FormField
+                              control={form.control}
+                              name="playersCoached"
+                              render={({ field }) => (
+                                <FormItem>
+                                  <FormLabel className="text-base font-medium">عدد اللاعبين المدربين</FormLabel>
+                                  <FormControl>
+                                    <Input
+                                      type="number"
+                                      {...field}
+                                      onChange={(e) =>
+                                        field.onChange(
+                                          e.target.value ? parseInt(e.target.value) : undefined
+                                        )
+                                      }
+                                      className="h-12"
+                                      placeholder="عدد اللاعبين"
+                                    />
+                                  </FormControl>
+                                  <FormMessage />
+                                </FormItem>
+                              )}
+                            />
+                          </div>
+                        </div>
+
+                        {/* Availability Section */}
+                        <div className="space-y-4 pt-6">
+                          <h3 className="text-lg font-semibold text-gray-800 flex items-center gap-2">
+                            <CheckCircle2 className="w-5 h-5" />
+                            التوفر
+                          </h3>
+
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <FormField
+                              control={form.control}
+                              name="contractType"
+                              render={({ field }) => (
+                                <FormItem>
+                                  <FormLabel className="text-base font-medium">نوع العقد</FormLabel>
+                                  <Select
+                                    onValueChange={field.onChange}
+                                    value={field.value || undefined}
+                                  >
+                                    <FormControl>
+                                      <SelectTrigger className="h-12">
+                                        <SelectValue placeholder="اختر نوع العقد" />
+                                      </SelectTrigger>
+                                    </FormControl>
+                                    <SelectContent>
+                                      <SelectItem value="متاح">متاح</SelectItem>
+                                      <SelectItem value="عقد دائم">عقد دائم</SelectItem>
+                                      <SelectItem value="عقد مؤقت">عقد مؤقت</SelectItem>
+                                      <SelectItem value="استشاري">استشاري</SelectItem>
+                                    </SelectContent>
+                                  </Select>
+                                  <FormMessage />
+                                </FormItem>
+                              )}
+                            />
+
+                            <FormField
+                              control={form.control}
+                              name="availability"
+                              render={({ field }) => (
+                                <FormItem>
+                                  <FormLabel className="text-base font-medium">الحالة</FormLabel>
+                                  <Select
+                                    onValueChange={field.onChange}
+                                    value={field.value || undefined}
+                                  >
+                                    <FormControl>
+                                      <SelectTrigger className="h-12">
+                                        <SelectValue placeholder="اختر الحالة" />
+                                      </SelectTrigger>
+                                    </FormControl>
+                                    <SelectContent>
+                                      <SelectItem value="متاح">متاح للعمل</SelectItem>
+                                      <SelectItem value="غير متاح">غير متاح</SelectItem>
+                                      <SelectItem value="قريباً">قريباً</SelectItem>
+                                    </SelectContent>
+                                  </Select>
+                                  <FormMessage />
+                                </FormItem>
+                              )}
+                            />
+                          </div>
+                        </div>
                       </>
                     )}
 

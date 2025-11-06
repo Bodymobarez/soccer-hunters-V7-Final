@@ -220,6 +220,17 @@ export default function ChatInterface({
       }
     };
   }, [user]);
+
+  // Close WebSocket when user logs out
+  useEffect(() => {
+    if (!user && socket) {
+      console.log("User logged out, closing WebSocket connection");
+      if (socket.readyState === WebSocket.OPEN || socket.readyState === WebSocket.CONNECTING) {
+        socket.close();
+      }
+      setSocket(null);
+    }
+  }, [user, socket]);
   
   // Load contacts and initial messages
   useEffect(() => {

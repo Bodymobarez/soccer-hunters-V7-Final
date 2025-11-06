@@ -212,10 +212,29 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }
     },
     onSuccess: () => {
+      // Clear user data from query cache
       queryClient.setQueryData(["/api/user"], null);
+      
+      // Clear all query cache to ensure clean state
+      queryClient.clear();
+      
+      // Clear localStorage completely
+      localStorage.removeItem('mockUser');
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+      
+      // Close any open WebSocket connections
+      // This will be handled by the components that use WebSocket
+      
       console.log("تم تسجيل الخروج بنجاح");
     },
     onError: (error: Error) => {
+      // Even on error, clear local data
+      queryClient.setQueryData(["/api/user"], null);
+      queryClient.clear();
+      localStorage.removeItem('mockUser');
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
       console.error("خطأ في تسجيل الخروج:", error.message);
     },
   });
@@ -230,7 +249,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const logout = async () => {
-    await logoutMutation.mutateAsync();
+    try {
+      await logoutMutation.mutateAsync();
+    } catch (error) {
+      // Even if logout fails, ensure local data is cleared
+      queryClient.setQueryData(["/api/user"], null);
+      queryClient.clear();
+      localStorage.removeItem('mockUser');
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+    }
   };
 
   // Context value
@@ -241,10 +269,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     error,
     login,
     register,
-    logout: async () => {
-      // Use the normal logout process
-      await logoutMutation.mutateAsync();
-    },
+    logout,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
