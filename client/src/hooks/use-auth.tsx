@@ -1,4 +1,4 @@
-import React, { createContext, ReactNode, useContext, useState } from "react";
+import React, { createContext, ReactNode, useContext, useState, useEffect } from "react";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import config from "@/lib/config";
@@ -51,36 +51,75 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   } = useQuery<User | null, Error>({
     queryKey: ["/api/user"],
     queryFn: async () => {
-      // Check localStorage first - if no mockUser, return null immediately
+      console.log("🔍 Checking authentication state...");
+      
+      // CRITICAL: Check localStorage FIRST - if no mockUser, return null immediately
+      // This prevents auto-login after logout
+      const storedMockUser = localStorage.getItem('mockUser');
+      const storedToken = localStorage.getItem('token');
+      const storedUser = localStorage.getItem('user');
+      
+      console.log("📦 Storage check:", { 
+        hasMockUser: !!storedMockUser, 
+        hasToken: !!storedToken, 
+        hasUser: !!storedUser 
+      });
+      
+      // If NO auth data exists, return null immediately
+      if (!storedMockUser && !storedToken && !storedUser) {
+        console.log("❌ No auth data found - returning null");
+        return null;
+      }
+      
       if (config.useMockApi) {
-        const stored = localStorage.getItem('mockUser');
-        if (!stored) {
+        if (!storedMockUser) {
+          console.log("❌ Mock API: No mockUser found");
           return null;
         }
+        console.log("✅ Mock API: User found");
         return await mockAuth.getCurrentUser();
       }
 
       try {
         const res = await apiRequest("GET", "/api/user");
-        if (res.status === 401) return null;
+        if (res.status === 401) {
+          console.log("❌ 401 Unauthorized");
+          return null;
+        }
+        console.log("✅ Backend: User authenticated");
         return await res.json();
       } catch (err) {
         // Fallback to mock if backend is not available
-        const stored = localStorage.getItem('mockUser');
-        if (!stored) {
+        if (!storedMockUser) {
+          console.log("❌ Backend error + No mockUser");
           return null;
         }
-        console.warn("Backend not available, checking mock authentication");
+        console.warn("⚠️ Backend not available, checking mock authentication");
         return await mockAuth.getCurrentUser();
       }
     },
     staleTime: 0, // Always consider data stale
     gcTime: 0, // React Query v5: immediately garbage collect to prevent caching
     refetchOnWindowFocus: false, // Don't refetch on window focus to prevent auto-login
-    refetchOnMount: true, // Always refetch on mount to get current user state
+    refetchOnMount: false, // ⚠️ CRITICAL: Don't auto-refetch on mount to prevent auto-login
     refetchOnReconnect: false, // Don't refetch on reconnect
     enabled: true, // Always enabled to check authentication state
+    retry: false, // Don't retry failed auth checks
+    retryOnMount: false, // Don't retry on mount
   });
+
+  // Effect to ensure user is null if no storage data exists
+  useEffect(() => {
+    const storedMockUser = localStorage.getItem('mockUser');
+    const storedToken = localStorage.getItem('token');
+    const storedUser = localStorage.getItem('user');
+    
+    // If no auth data and user is not null, force set to null
+    if (!storedMockUser && !storedToken && !storedUser && user !== null) {
+      console.log("⚠️ No storage data but user exists - forcing logout");
+      queryClient.setQueryData(["/api/user"], null);
+    }
+  }, [user]);
 
   // Login mutation
   const loginMutation = useMutation({
