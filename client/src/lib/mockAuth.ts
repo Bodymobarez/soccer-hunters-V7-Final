@@ -56,13 +56,20 @@ class MockAuth {
 
   async logout() {
     this.currentUser = null;
-    // Clear all authentication-related data from localStorage
-    localStorage.removeItem('mockUser');
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
-    // Clear any other session data
-    localStorage.removeItem('authToken');
-    localStorage.removeItem('session');
+    
+    // Clear all authentication-related data from both localStorage and sessionStorage
+    const authKeys = ['mockUser', 'token', 'user', 'authToken', 'session', 'userData'];
+    
+    authKeys.forEach(key => {
+      localStorage.removeItem(key);
+      sessionStorage.removeItem(key);
+    });
+    
+    // Clear entire storage for good measure
+    localStorage.clear();
+    sessionStorage.clear();
+    
+    console.log("🧹 MockAuth: All storage cleared");
   }
 
   async register(userData: any) {

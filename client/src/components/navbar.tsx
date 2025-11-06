@@ -85,40 +85,48 @@ export function Navbar() {
 
   const handleLogout = async () => {
     try {
-      // Clear localStorage FIRST before anything else
-      localStorage.clear(); // Clear everything to be sure
+      console.log("🔴 Starting logout process...");
       
-      // Also explicitly remove auth-related keys
-      localStorage.removeItem('mockUser');
-      localStorage.removeItem('token');
-      localStorage.removeItem('user');
-      localStorage.removeItem('authToken');
-      localStorage.removeItem('session');
+      // Step 1: Clear ALL storage immediately
+      localStorage.clear();
+      sessionStorage.clear();
       
-      // Call logout function (which will also clear data)
+      // Step 2: Explicitly remove auth keys (redundant but ensures cleanup)
+      const authKeys = ['mockUser', 'token', 'user', 'authToken', 'session', 'userData'];
+      authKeys.forEach(key => {
+        localStorage.removeItem(key);
+        sessionStorage.removeItem(key);
+      });
+      
+      console.log("✅ Storage cleared");
+      
+      // Step 3: Call logout function to clear React Query cache
       await logout();
       
-      // Wait a moment to ensure all state is cleared
-      await new Promise(resolve => setTimeout(resolve, 200));
+      console.log("✅ Logout function completed");
       
-      // Double check localStorage is empty
-      if (localStorage.getItem('mockUser')) {
-        localStorage.removeItem('mockUser');
-      }
+      // Step 4: Wait briefly to ensure all async operations complete
+      await new Promise(resolve => setTimeout(resolve, 100));
       
-      // Force page reload to ensure clean state
-      window.location.replace("/"); // Use replace instead of href to prevent back button issues
+      // Step 5: Final verification - ensure storage is empty
+      authKeys.forEach(key => {
+        if (localStorage.getItem(key)) localStorage.removeItem(key);
+        if (sessionStorage.getItem(key)) sessionStorage.removeItem(key);
+      });
+      
+      console.log("✅ Final verification complete");
+      
+      // Step 6: Force navigation to login page with page reload
+      window.location.replace("/");
+      
     } catch (error) {
-      console.error("Error during logout:", error);
-      // Even if logout fails, clear ALL data
-      localStorage.clear();
-      localStorage.removeItem('mockUser');
-      localStorage.removeItem('token');
-      localStorage.removeItem('user');
-      localStorage.removeItem('authToken');
-      localStorage.removeItem('session');
+      console.error("❌ Error during logout:", error);
       
-      // Force page reload
+      // Emergency cleanup - clear everything regardless of error
+      localStorage.clear();
+      sessionStorage.clear();
+      
+      // Force page reload to reset application state
       window.location.replace("/");
     }
   };

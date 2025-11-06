@@ -207,9 +207,11 @@ export const queryClient = new QueryClient({
       queryFn: getQueryFn({ on401: "throw" }),
       refetchInterval: false,
       refetchOnWindowFocus: false,
-      staleTime: 0, // Changed from Infinity to 0 to allow fresh data on mount
+      refetchOnMount: false, // Don't automatically refetch on mount
+      refetchOnReconnect: false, // Don't refetch when reconnecting
+      staleTime: 0, // Always consider data stale
+      gcTime: 0, // React Query v5: renamed from cacheTime - immediately garbage collect
       retry: false,
-      cacheTime: 0, // Don't cache queries to ensure fresh data after logout
     },
     mutations: {
       retry: false,

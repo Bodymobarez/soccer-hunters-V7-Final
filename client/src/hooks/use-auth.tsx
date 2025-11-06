@@ -74,10 +74,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         return await mockAuth.getCurrentUser();
       }
     },
-    staleTime: 0, // Always consider data stale to allow refetch
-    cacheTime: 0, // Don't cache user data to ensure fresh data after logout
+    staleTime: 0, // Always consider data stale
+    gcTime: 0, // React Query v5: immediately garbage collect to prevent caching
     refetchOnWindowFocus: false, // Don't refetch on window focus to prevent auto-login
     refetchOnMount: true, // Always refetch on mount to get current user state
+    refetchOnReconnect: false, // Don't refetch on reconnect
+    enabled: true, // Always enabled to check authentication state
   });
 
   // Login mutation
@@ -224,12 +226,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }
     },
     onSuccess: () => {
-      // Clear localStorage completely first
-      localStorage.removeItem('mockUser');
-      localStorage.removeItem('token');
-      localStorage.removeItem('user');
-      localStorage.removeItem('authToken');
-      localStorage.removeItem('session');
+      // Clear all storage completely
+      const authKeys = ['mockUser', 'token', 'user', 'authToken', 'session', 'userData'];
+      authKeys.forEach(key => {
+        localStorage.removeItem(key);
+        sessionStorage.removeItem(key);
+      });
       
       // Set user data to null immediately - DO NOT refetch
       queryClient.setQueryData(["/api/user"], null);
@@ -240,15 +242,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       // Remove query from cache to prevent automatic refetch
       queryClient.removeQueries({ queryKey: ["/api/user"] });
       
-      console.log("تم تسجيل الخروج بنجاح");
+      console.log("✅ تم تسجيل الخروج بنجاح");
     },
     onError: (error: Error) => {
-      // Even on error, clear local data
-      localStorage.removeItem('mockUser');
-      localStorage.removeItem('token');
-      localStorage.removeItem('user');
-      localStorage.removeItem('authToken');
-      localStorage.removeItem('session');
+      // Even on error, clear all storage
+      const authKeys = ['mockUser', 'token', 'user', 'authToken', 'session', 'userData'];
+      authKeys.forEach(key => {
+        localStorage.removeItem(key);
+        sessionStorage.removeItem(key);
+      });
       
       // Set user data to null - DO NOT refetch
       queryClient.setQueryData(["/api/user"], null);
@@ -259,7 +261,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       // Remove query from cache to prevent automatic refetch
       queryClient.removeQueries({ queryKey: ["/api/user"] });
       
-      console.error("خطأ في تسجيل الخروج:", error.message);
+      console.error("❌ خطأ في تسجيل الخروج:", error.message);
     },
   });
 
@@ -274,12 +276,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const logout = async () => {
     try {
-      // Clear localStorage first to prevent getCurrentUser from returning user
-      localStorage.removeItem('mockUser');
-      localStorage.removeItem('token');
-      localStorage.removeItem('user');
-      localStorage.removeItem('authToken');
-      localStorage.removeItem('session');
+      console.log("🔴 useAuth: Starting logout...");
+      
+      // Clear all storage first to prevent getCurrentUser from returning user
+      const authKeys = ['mockUser', 'token', 'user', 'authToken', 'session', 'userData'];
+      authKeys.forEach(key => {
+        localStorage.removeItem(key);
+        sessionStorage.removeItem(key);
+      });
       
       // Cancel any ongoing queries
       queryClient.cancelQueries({ queryKey: ["/api/user"] });
@@ -287,17 +291,23 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       // Set user data to null immediately
       queryClient.setQueryData(["/api/user"], null);
       
+      console.log("✅ useAuth: Storage cleared, calling logout mutation...");
+      
       // Call logout mutation
       await logoutMutation.mutateAsync();
       
+      console.log("✅ useAuth: Logout mutation completed");
+      
       // DO NOT refetch - just ensure data is null
     } catch (error) {
-      // Even if logout fails, ensure local data is cleared
-      localStorage.removeItem('mockUser');
-      localStorage.removeItem('token');
-      localStorage.removeItem('user');
-      localStorage.removeItem('authToken');
-      localStorage.removeItem('session');
+      console.error("❌ useAuth: Logout error:", error);
+      
+      // Even if logout fails, ensure all storage is cleared
+      const authKeys = ['mockUser', 'token', 'user', 'authToken', 'session', 'userData'];
+      authKeys.forEach(key => {
+        localStorage.removeItem(key);
+        sessionStorage.removeItem(key);
+      });
       
       // Set user data to null - DO NOT refetch
       queryClient.setQueryData(["/api/user"], null);
